@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler Online</title>
+    <title>Kart Sistemi - Optimize Versiyon</title>
     <style>
         :root { --bg: #0d2323; --cyan: #22d3ee; }
         * { box-sizing: border-box; }
@@ -13,78 +13,47 @@
             display: flex; height: 100vh; margin: 0; overflow: hidden;
         }
 
-        /* --- MOBİL GÖRÜNÜM --- */
+        /* MOBİL DÜZEN */
         @media (max-width: 768px) {
             body { display: flex; flex-direction: column; overflow-y: auto; height: auto; }
-
-            .text-area-container { 
-                order: 1; width: 100%; height: auto !important;
-                border-left: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 15px; background: rgba(0, 0, 0, 0.5);
-            }
-
+            .text-area-container { order: 1; width: 100%; height: auto !important; border: none; padding: 15px; }
             .cards-area { order: 2; width: 100%; height: auto !important; overflow: visible !important; padding: 15px; }
             .grid { grid-template-columns: repeat(2, 1fr) !important; }
+            textarea { height: 120px; max-height: 300px; }
         }
 
-        /* --- GENEL TASARIM --- */
         .cards-area { flex: 3; padding: 20px; overflow-y: auto; height: 100vh; }
-        
-        .text-area-container { 
-            flex: 1; display: flex; flex-direction: column; 
-            background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px; height: 100vh;
-        }
-
-        .title { 
-            color: var(--cyan); font-size: 0.9rem; font-weight: bold; text-transform: uppercase; 
-            margin: 10px 0 10px 0; border-left: 3px solid var(--cyan); padding-left: 10px;
-        }
-
-        /* AKILLI TEXTAREA STİLİ */
-        textarea { 
-            width: 100%;
-            min-height: 100px; /* Başlangıç boyu */
-            max-height: 400px; /* Uzamasının duracağı nokta */
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); 
-            color: var(--cyan); 
-            padding: 15px; 
-            border-radius: 10px; 
-            resize: none; 
-            outline: none; 
-            font-size: 1rem;
-            overflow-y: auto;
-            transition: border-color 0.3s;
-        }
-
-        /* PC'de Textarea'nın kalan alanı doldurması için özel ayar */
-        @media (min-width: 769px) {
-            textarea { flex-grow: 0; } 
-        }
-
+        .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100vh; }
+        .title { color: var(--cyan); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin: 10px 0; border-left: 3px solid var(--cyan); padding-left: 10px; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; }
 
+        /* TEXTAREA */
+        textarea { 
+            width: 100%; min-height: 80px; max-height: 350px; 
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--cyan); padding: 12px; border-radius: 8px; resize: none; outline: none; 
+            overflow-y: auto; transition: 0.3s;
+        }
+
+        /* BUTON */
         #allOpenBtn {
             background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
             padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            margin-top: 10px; transition: all 0.3s; text-transform: uppercase;
-            font-size: 0.85rem; width: 100%;
+            margin-top: 10px; text-transform: uppercase; font-size: 0.8rem; width: 100%; transition: 0.3s;
         }
+        #allOpenBtn:hover:not(:disabled) { background: var(--cyan); color: var(--bg); box-shadow: 0 0 10px var(--cyan); }
 
-        #allOpenBtn:hover:not(:disabled) { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan); }
-
-        .card { width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; opacity: 0; transform: translateY(15px); transition: 0.4s; }
+        /* KARTLAR */
+        .card { width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; opacity: 0; transform: translateY(10px); transition: 0.4s; }
         .card.visible { opacity: 1; transform: translateY(0); }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; overflow: hidden; }
-        .back { border: 3px solid; } 
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; overflow: hidden; }
+        .back { border: 2.5px solid; } 
         .front { transform: rotateY(180deg); background: white; }
         img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* RENKLER */
+        /* RENK BORDERLARI */
         .kural-ozel { border-color: #ffffff; }
         .sari { border-color: #e3f498; }
         .mavi { border-color: #92e8f7; }
@@ -105,20 +74,15 @@
 
 <div class="text-area-container">
     <div class="title">Notlar</div>
-    <textarea id="autoTextarea" placeholder="Hikayenizi buraya yazın..." oninput="autoResize(this)"></textarea>
-    
+    <textarea id="autoTextarea" placeholder="Yazdıkça uzar..." oninput="autoResize(this)"></textarea>
     <div class="title">Kontrol Paneli</div>
     <button id="allOpenBtn">Hepsini Aç</button>
 </div>
 
 <script>
-    // --- OTOMATİK UZAMA FONKSİYONU ---
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-    }
+    function autoResize(t) { t.style.height='auto'; t.style.height=t.scrollHeight+'px'; }
 
-    // AYARLAR
+    // AYARLAR (WebP Formatına Göre Ayarlandı)
     const ZAMANLAYICI_AKTIF = true; 
     const TOPLAM_SANIYE = 125;      
     const ACILIS_GECIKMESI = 30;    
@@ -136,11 +100,7 @@
     let tumKartlar = [];
     let isAllOpen = false;
 
-    function formatTime(seconds) {
-        const min = Math.floor(seconds / 60);
-        const sec = seconds % 60;
-        return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-    }
+    function formatTime(s) { return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
 
     function randomNumbers(max, count) {
         let n = [];
@@ -151,16 +111,17 @@
         return n;
     }
 
-    const kuralNolar = randomNumbers(KURAL_AYAR.havuz, KURAL_AYAR.dagitilacak);
-    kuralNolar.forEach((no, i) => {
-        const c = render({ color: 'kural-ozel', front: `kural_on_${no}.jpeg`, back: `kural_arka.jpeg` }, document.getElementById('kuralGrid'), i);
+    // 1. Kural Kartı (.webp olarak ayarlandı)
+    randomNumbers(KURAL_AYAR.havuz, KURAL_AYAR.dagitilacak).forEach((no, i) => {
+        const c = render({ color: 'kural-ozel', front: `kural_on_${no}.webp`, back: `kural_arka.webp` }, document.getElementById('kuralGrid'), i);
         tumKartlar.push(c);
     });
 
+    // 2. Oyun Kartları (.webp olarak ayarlandı)
     let oyunData = [];
     for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
         randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
-            oyunData.push({ color: renk, front: `${renk}_on_${no}.jpg`, back: `${renk}_arka.jpeg` });
+            oyunData.push({ color: renk, front: `${renk}_on_${no}.webp`, back: `${renk}_arka.webp` });
         });
     }
     oyunData.sort(() => Math.random() - 0.5);
@@ -173,8 +134,8 @@
         const div = document.createElement('div');
         div.className = 'card';
         div.innerHTML = `<div class="card-inner">
-            <div class="face back ${card.color}"><img src="${card.back}"></div>
-            <div class="face front"><img src="${card.front}"></div>
+            <div class="face back ${card.color}"><img src="${card.back}" loading="lazy"></div>
+            <div class="face front"><img src="${card.front}" loading="lazy"></div>
         </div>`;
         div.onclick = () => div.classList.toggle('flipped');
         target.appendChild(div);
@@ -185,44 +146,31 @@
     const btn = document.getElementById('allOpenBtn');
     btn.onclick = () => {
         if (!isAllOpen) {
-            isAllOpen = true;
-            btn.disabled = true;
-            btn.innerText = "Açılıyor...";
-            let openedCount = 0;
+            isAllOpen = true; btn.disabled = true; btn.innerText = "Açılıyor...";
+            let count = 0;
             tumKartlar.forEach((card, index) => {
                 setTimeout(() => {
                     card.classList.add('flipped');
-                    openedCount++;
-                    if(openedCount === tumKartlar.length) {
+                    count++;
+                    if(count === tumKartlar.length) {
                         if (ZAMANLAYICI_AKTIF) {
                             let timeLeft = TOPLAM_SANIYE;
-                            const timerInterval = setInterval(() => {
+                            const timer = setInterval(() => {
                                 btn.innerText = `Kalan: ${formatTime(timeLeft)}`;
                                 timeLeft--;
-                                if(timeLeft < 0) {
-                                    clearInterval(timerInterval);
-                                    kapatmaIslemi();
-                                }
+                                if(timeLeft < 0) { clearInterval(timer); kapatmaIslemi(); }
                             }, 1000);
-                        } else {
-                            btn.disabled = false;
-                            btn.innerText = "Hepsini Kapat";
-                        }
+                        } else { btn.disabled = false; btn.innerText = "Hepsini Kapat"; }
                     }
                 }, index * ACILIS_GECIKMESI);
             });
-        } else {
-            kapatmaIslemi();
-        }
+        } else { kapatmaIslemi(); }
     };
 
     function kapatmaIslemi() {
         tumKartlar.forEach(c => c.classList.remove('flipped'));
-        btn.disabled = false;
-        btn.innerText = "Hepsini Aç";
-        isAllOpen = false;
+        btn.disabled = false; btn.innerText = "Hepsini Aç"; isAllOpen = false;
     }
 </script>
-
 </body>
 </html>
