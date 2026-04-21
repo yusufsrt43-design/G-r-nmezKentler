@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kart Sistemi - Responsive Panel</title>
+    <title>Kart Sistemi - Akıllı Not Alanı</title>
     <style>
         :root { --bg: #0d2323; --cyan: #22d3ee; }
         * { box-sizing: border-box; }
@@ -13,43 +13,21 @@
             display: flex; height: 100vh; margin: 0; overflow: hidden;
         }
 
-        /* --- MOBİL GÖRÜNÜM AYARLARI (768px altı) --- */
+        /* --- MOBİL GÖRÜNÜM --- */
         @media (max-width: 768px) {
-            body { 
-                display: flex; 
-                flex-direction: column; /* Bölmeleri dikey diz */
-                overflow-y: auto; 
-                height: auto; 
-            }
+            body { display: flex; flex-direction: column; overflow-y: auto; height: auto; }
 
             .text-area-container { 
-                order: 1; /* Not alanını en üste taşı */
-                width: 100%;
-                height: auto !important;
-                border-left: none !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 15px;
+                order: 1; width: 100%; height: auto !important;
+                border-left: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 15px; background: rgba(0, 0, 0, 0.5);
             }
 
-            textarea {
-                height: 150px; /* Mobilde not alanı çok yer kaplamasın */
-                margin-bottom: 10px;
-            }
-
-            .cards-area { 
-                order: 2; /* Kartları not alanının altına al */
-                width: 100%;
-                height: auto !important;
-                overflow: visible !important;
-                padding: 15px;
-            }
-
-            .grid { 
-                grid-template-columns: repeat(2, 1fr) !important; /* Mobilde 2 sütun */
-            }
+            .cards-area { order: 2; width: 100%; height: auto !important; overflow: visible !important; padding: 15px; }
+            .grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
 
-        /* --- MASAÜSTÜ GÖRÜNÜM AYARLARI --- */
+        /* --- GENEL TASARIM --- */
         .cards-area { flex: 3; padding: 20px; overflow-y: auto; height: 100vh; }
         
         .text-area-container { 
@@ -59,56 +37,52 @@
         }
 
         .title { 
-            color: var(--cyan); font-size: 1rem; font-weight: bold; text-transform: uppercase; 
-            margin: 10px 0 15px 0; border-left: 3px solid var(--cyan); padding-left: 10px;
+            color: var(--cyan); font-size: 0.9rem; font-weight: bold; text-transform: uppercase; 
+            margin: 10px 0 10px 0; border-left: 3px solid var(--cyan); padding-left: 10px;
         }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 15px; 
-            width: 100%; 
+        /* AKILLI TEXTAREA STİLİ */
+        textarea { 
+            width: 100%;
+            min-height: 100px; /* Başlangıç boyu */
+            max-height: 400px; /* Uzamasının duracağı nokta */
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); 
+            color: var(--cyan); 
+            padding: 15px; 
+            border-radius: 10px; 
+            resize: none; 
+            outline: none; 
+            font-size: 1rem;
+            overflow-y: auto;
+            transition: border-color 0.3s;
         }
+
+        /* PC'de Textarea'nın kalan alanı doldurması için özel ayar */
+        @media (min-width: 769px) {
+            textarea { flex-grow: 0; } 
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; }
 
         #allOpenBtn {
-            background: transparent;
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            width: 100%;
+            background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
+            padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            margin-top: 10px; transition: all 0.3s; text-transform: uppercase;
+            font-size: 0.85rem; width: 100%;
         }
-        #allOpenBtn:hover:not(:disabled) {
-            background: var(--cyan);
-            color: var(--bg);
-            box-shadow: 0 0 15px var(--cyan);
-        }
-        #allOpenBtn:disabled { border-color: #f44336; color: #f44336; cursor: not-allowed; opacity: 0.8; }
 
-        .card { 
-            width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; 
-            opacity: 0; transform: translateY(15px); transition: opacity 0.4s, transform 0.4s; 
-        }
+        #allOpenBtn:hover:not(:disabled) { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan); }
+
+        .card { width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; opacity: 0; transform: translateY(15px); transition: 0.4s; }
         .card.visible { opacity: 1; transform: translateY(0); }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; overflow: hidden; }
         .back { border: 3px solid; } 
-        .front { transform: rotateY(180deg); background: white; border: 1px solid rgba(0,0,0,0.1); }
+        .front { transform: rotateY(180deg); background: white; }
         img { width: 100%; height: 100%; object-fit: cover; }
-        
-        textarea { 
-            flex: 1; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); color: var(--cyan); 
-            padding: 15px; border-radius: 10px; resize: none; outline: none; font-size: 1rem;
-        }
 
         /* RENKLER */
         .kural-ozel { border-color: #ffffff; }
@@ -131,12 +105,19 @@
 
 <div class="text-area-container">
     <div class="title">Notlar</div>
-    <textarea placeholder="Buraya yazabilirsiniz..."></textarea>
+    <textarea id="autoTextarea" placeholder="Yazdıkça uzar..." oninput="autoResize(this)"></textarea>
+    
     <div class="title">Kontrol Paneli</div>
     <button id="allOpenBtn">Hepsini Aç</button>
 </div>
 
 <script>
+    // --- OTOMATİK UZAMA FONKSİYONU ---
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
     // AYARLAR
     const ZAMANLAYICI_AKTIF = true; 
     const TOPLAM_SANIYE = 125;      
@@ -202,19 +183,16 @@
     }
 
     const btn = document.getElementById('allOpenBtn');
-    
     btn.onclick = () => {
         if (!isAllOpen) {
             isAllOpen = true;
             btn.disabled = true;
             btn.innerText = "Açılıyor...";
             let openedCount = 0;
-
             tumKartlar.forEach((card, index) => {
                 setTimeout(() => {
                     card.classList.add('flipped');
                     openedCount++;
-                    
                     if(openedCount === tumKartlar.length) {
                         if (ZAMANLAYICI_AKTIF) {
                             let timeLeft = TOPLAM_SANIYE;
