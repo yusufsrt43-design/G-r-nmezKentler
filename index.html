@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kart Sistemi - Profesyonel Panel</title>
+    <style>
+        :root { --bg: #0d2323; --cyan: #22d3ee; }
+        * { box-sizing: border-box; }
+        body { 
+            background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; 
+            display: flex; height: 100vh; margin: 0; overflow: hidden;
+        }
+        .cards-area { flex: 3; padding: 20px; overflow-y: auto; }
+        .text-area-container { 
+            flex: 1; display: flex; flex-direction: column; 
+            background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+        .title { 
+            color: var(--cyan); font-size: 1rem; font-weight: bold; text-transform: uppercase; 
+            margin: 10px 0 15px 0; border-left: 3px solid var(--cyan); padding-left: 10px;
+        }
+
+        /* BUTON STİLİ */
+        #allOpenBtn {
+            background: transparent;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        #allOpenBtn:hover:not(:disabled) {
+            background: var(--cyan);
+            color: var(--bg);
+            box-shadow: 0 0 15px var(--cyan);
+        }
+        #allOpenBtn:disabled {
+            border-color: #f44336;
+            color: #f44336;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; }
+        .card { 
+            width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; 
+            opacity: 0; transform: translateY(15px); transition: opacity 0.4s, transform 0.4s; 
+        }
+        .card.visible { opacity: 1; transform: translateY(0); }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; overflow: hidden; }
+        .back { border: 3px solid; } 
+        .front { transform: rotateY(180deg); background: white; border: 1px solid rgba(0,0,0,0.1); }
+        img { width: 100%; height: 100%; object-fit: cover; }
+        
+        textarea { 
+            flex: 1; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); color: var(--cyan); 
+            padding: 15px; border-radius: 10px; resize: none; outline: none;
+        }
+
+        /* RENKLER */
+        .kural-ozel { border-color: #ffffff; }
+        .sari { border-color: #ffca28; }
+        .mavi { border-color: #2196f3; }
+        .kirmizi { border-color: #f44336; }
+        .yesil { border-color: #4caf50; }
+        .mor { border-color: #9c27b0; }
+        .turuncu { border-color: #ff9800; }
+    </style>
+</head>
+<body>
+
+<div class="cards-area">
+    <div class="title">Kural Kartı</div>
+    <div class="grid" style="grid-template-columns: repeat(5, 120px);" id="kuralGrid"></div>
+    <div class="title">Oyun Kartları</div>
+    <div class="grid" id="oyunGrid"></div>
+</div>
+
+<div class="text-area-container">
+    <div class="title">Kontrol Paneli</div>
+    <button id="allOpenBtn">Hepsini Aç</button>
+    <div class="title">Notlar</div>
+    <textarea placeholder="Buraya yazabilirsiniz..."></textarea>
+</div>
+
+<script>
+    // ************************************************************
+    // AYARLAR PANELİ
+    // ************************************************************
+    const ZAMANLAYICI_AKTIF = true; // true: Otomatik kapanır, false: Süresiz açık kalır
+    const TOPLAM_SANIYE = 125;      // Kartlar kaç saniye açık kalsın? (Örn: 125s = 02:05)
+    const ACILIS_GECIKMESI = 30;    // Kartların ardışık açılma hızı (ms)
+
+    const KURAL_AYAR = { dagitilacak: 1, havuz: 20 };
+    const OYUN_AYARLARI = {
+        'sari':    { dagitilacak: 20, havuz: 100 },
+        'mavi':    { dagitilacak: 20, havuz: 100 },
+        'kirmizi': { dagitilacak: 20, havuz: 100 },
+        'yesil':   { dagitilacak: 20, havuz: 100 },
+        'mor':     { dagitilacak: 20, havuz: 100 },
+        'turuncu': { dagitilacak: 20, havuz: 100 }
+    };
+    // ************************************************************
+    
+    let tumKartlar = [];
+    let isAllOpen = false;
+
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = seconds % 60;
+        return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function randomNumbers(max, count) {
+        let n = [];
+        while(n.length < count) {
+            let r = Math.floor(Math.random() * max) + 1;
+            if(!n.includes(r)) n.push(r);
+        }
+        return n;
+    }
+
+    // 1. Kural Kartı
+    const kuralNolar = randomNumbers(KURAL_AYAR.havuz, KURAL_AYAR.dagitilacak);
+    kuralNolar.forEach((no, i) => {
+        const c = render({ color: 'kural-ozel', front: `kural_on_${no}.jpg`, back: `kural_arka.jpg` }, document.getElementById('kuralGrid'), i);
+        tumKartlar.push(c);
+    });
+
+    // 2. Oyun Kartları
+    let oyunData = [];
+    for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
+        randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
+            oyunData.push({ color: renk, front: `${renk}_on_${no}.jpg`, back: `${renk}_arka.jpg` });
+        });
+    }
+    oyunData.sort(() => Math.random() - 0.5);
+    oyunData.forEach((c, i) => {
+        const cardEl = render(c, document.getElementById('oyunGrid'), i + KURAL_AYAR.dagitilacak);
+        tumKartlar.push(cardEl);
+    });
+
+    function render(card, target, delay) {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `<div class="card-inner">
+            <div class="face back ${card.color}"><img src="${card.back}"></div>
+            <div class="face front"><img src="${card.front}"></div>
+        </div>`;
+        div.onclick = () => div.classList.toggle('flipped');
+        target.appendChild(div);
+        setTimeout(() => div.classList.add('visible'), delay * 12);
+        return div;
+    }
+
+    const btn = document.getElementById('allOpenBtn');
+    
+    btn.onclick = () => {
+        if (!isAllOpen) {
+            // AÇMA İŞLEMİ
+            isAllOpen = true;
+            btn.disabled = true;
+            btn.innerText = "Açılıyor...";
+            let openedCount = 0;
+
+            tumKartlar.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('flipped');
+                    openedCount++;
+                    
+                    if(openedCount === tumKartlar.length) {
+                        if (ZAMANLAYICI_AKTIF) {
+                            let timeLeft = TOPLAM_SANIYE;
+                            const timerInterval = setInterval(() => {
+                                btn.innerText = `Kalan: ${formatTime(timeLeft)}`;
+                                timeLeft--;
+
+                                if(timeLeft < 0) {
+                                    clearInterval(timerInterval);
+                                    kapatmaIslemi();
+                                }
+                            }, 1000);
+                        } else {
+                            btn.disabled = false;
+                            btn.innerText = "Hepsini Kapat";
+                        }
+                    }
+                }, index * ACILIS_GECIKMESI);
+            });
+        } else {
+            // MANUEL KAPATMA (Zamanlayıcı kapalıysa çalışır)
+            kapatmaIslemi();
+        }
+    };
+
+    function kapatmaIslemi() {
+        tumKartlar.forEach(c => c.classList.remove('flipped'));
+        btn.disabled = false;
+        btn.innerText = "Hepsini Aç";
+        isAllOpen = false;
+    }
+</script>
+
+</body>
+</html>
