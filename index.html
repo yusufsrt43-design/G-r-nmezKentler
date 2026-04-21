@@ -134,7 +134,7 @@
     // 1. Kural Kartı
     const kuralNolar = randomNumbers(KURAL_AYAR.havuz, KURAL_AYAR.dagitilacak);
     kuralNolar.forEach((no, i) => {
-        const c = render({ color: 'kural-ozel', front: `kural_on_${no}.jpg`, back: `kural_arka.jpg` }, document.getElementById('kuralGrid'), i);
+        const c = render({ color: 'kural-ozel', front: `kural_on_${no}.jpeg`, back: `kural_arka.jpeg` }, document.getElementById('kuralGrid'), i);
         tumKartlar.push(c);
     });
 
@@ -142,7 +142,7 @@
     let oyunData = [];
     for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
         randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
-            oyunData.push({ color: renk, front: `${renk}_on_${no}.jpg`, back: `${renk}_arka.jpg` });
+            oyunData.push({ color: renk, front: `${renk}_on_${no}.jpeg`, back: `${renk}_arka.jpeg` });
         });
     }
     oyunData.sort(() => Math.random() - 0.5);
