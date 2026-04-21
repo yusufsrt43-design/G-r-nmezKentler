@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler</title>
+    <title>Kart Sistemi - Responsive Panel</title>
     <style>
         :root { --bg: #0d2323; --cyan: #22d3ee; }
         * { box-sizing: border-box; }
@@ -13,17 +13,43 @@
             display: flex; height: 100vh; margin: 0; overflow: hidden;
         }
 
-        /* MOBİLDE YAPIYI DEĞİŞTİRİR (Alt alta dizilim) */
+        /* --- MOBİL GÖRÜNÜM AYARLARI (768px altı) --- */
         @media (max-width: 768px) {
-            body { display: block; overflow-y: auto; height: auto; }
-            .cards-area { height: auto !important; overflow: visible !important; }
+            body { 
+                display: flex; 
+                flex-direction: column; /* Bölmeleri dikey diz */
+                overflow-y: auto; 
+                height: auto; 
+            }
+
             .text-area-container { 
-                height: 400px; 
-                border-left: none !important; 
-                border-top: 1px solid rgba(255, 255, 255, 0.1); 
+                order: 1; /* Not alanını en üste taşı */
+                width: 100%;
+                height: auto !important;
+                border-left: none !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 15px;
+            }
+
+            textarea {
+                height: 150px; /* Mobilde not alanı çok yer kaplamasın */
+                margin-bottom: 10px;
+            }
+
+            .cards-area { 
+                order: 2; /* Kartları not alanının altına al */
+                width: 100%;
+                height: auto !important;
+                overflow: visible !important;
+                padding: 15px;
+            }
+
+            .grid { 
+                grid-template-columns: repeat(2, 1fr) !important; /* Mobilde 2 sütun */
             }
         }
 
+        /* --- MASAÜSTÜ GÖRÜNÜM AYARLARI --- */
         .cards-area { flex: 3; padding: 20px; overflow-y: auto; height: 100vh; }
         
         .text-area-container { 
@@ -37,7 +63,6 @@
             margin: 10px 0 15px 0; border-left: 3px solid var(--cyan); padding-left: 10px;
         }
 
-        /* DİNAMİK IZGARA: Masaüstü 5, Tablet 3, Mobil 2 sütun */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(5, 1fr); 
@@ -45,10 +70,6 @@
             width: 100%; 
         }
 
-        @media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-
-        /* BUTON STİLİ */
         #allOpenBtn {
             background: transparent;
             border: 1px solid var(--cyan);
@@ -71,7 +92,6 @@
         }
         #allOpenBtn:disabled { border-color: #f44336; color: #f44336; cursor: not-allowed; opacity: 0.8; }
 
-        /* KARTLAR */
         .card { 
             width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; 
             opacity: 0; transform: translateY(15px); transition: opacity 0.4s, transform 0.4s; 
@@ -104,16 +124,16 @@
 
 <div class="cards-area">
     <div class="title">Kural Kartı</div>
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));" id="kuralGrid"></div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));" id="kuralGrid"></div>
     <div class="title">Oyun Kartları</div>
     <div class="grid" id="oyunGrid"></div>
 </div>
 
 <div class="text-area-container">
-    <div class="title">Kontrol Paneli</div>
-    <button id="allOpenBtn">Hepsini Aç</button>
     <div class="title">Notlar</div>
     <textarea placeholder="Buraya yazabilirsiniz..."></textarea>
+    <div class="title">Kontrol Paneli</div>
+    <button id="allOpenBtn">Hepsini Aç</button>
 </div>
 
 <script>
@@ -150,18 +170,15 @@
         return n;
     }
 
-    // 1. Kural Kartı
     const kuralNolar = randomNumbers(KURAL_AYAR.havuz, KURAL_AYAR.dagitilacak);
     kuralNolar.forEach((no, i) => {
         const c = render({ color: 'kural-ozel', front: `kural_on_${no}.jpeg`, back: `kural_arka.jpeg` }, document.getElementById('kuralGrid'), i);
         tumKartlar.push(c);
     });
 
-    // 2. Oyun Kartları
     let oyunData = [];
     for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
         randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
-            // Uzantıları klasöründeki gerçek uzantılarla eşleşecek şekilde ayarla (.jpeg veya .jpg)
             oyunData.push({ color: renk, front: `${renk}_on_${no}.jpg`, back: `${renk}_arka.jpeg` });
         });
     }
