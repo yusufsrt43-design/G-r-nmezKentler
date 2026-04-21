@@ -106,7 +106,7 @@
     const OYUN_AYARLARI = {
         'sari':    { dagitilacak: 20, havuz: 100 },
         'mavi':    { dagitilacak: 20, havuz: 100 },
-        'kirmizi': { dagitilacak: 20, havuz: 100 },
+        'kirmizi': { dagitilacak: 20, havuz: 20 },
         'yesil':   { dagitilacak: 20, havuz: 100 },
         'mor':     { dagitilacak: 20, havuz: 100 },
         'turuncu': { dagitilacak: 20, havuz: 100 }
@@ -142,7 +142,7 @@
     let oyunData = [];
     for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
         randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
-            oyunData.push({ color: renk, front: `${renk}_on_${no}.jpeg`, back: `${renk}_arka.jpeg` });
+            oyunData.push({ color: renk, front: `${renk}_on_${no}.jpg`, back: `${renk}_arka.jpeg` });
         });
     }
     oyunData.sort(() => Math.random() - 0.5);
