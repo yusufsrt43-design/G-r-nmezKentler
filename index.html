@@ -1,26 +1,52 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Kart Sistemi - Profesyonel Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart Sistemi - Mobil Uyumlu Panel</title>
     <style>
         :root { --bg: #0d2323; --cyan: #22d3ee; }
         * { box-sizing: border-box; }
+        
         body { 
             background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; 
             display: flex; height: 100vh; margin: 0; overflow: hidden;
         }
-        .cards-area { flex: 3; padding: 20px; overflow-y: auto; }
+
+        /* MOBİLDE YAPIYI DEĞİŞTİRİR (Alt alta dizilim) */
+        @media (max-width: 768px) {
+            body { display: block; overflow-y: auto; height: auto; }
+            .cards-area { height: auto !important; overflow: visible !important; }
+            .text-area-container { 
+                height: 400px; 
+                border-left: none !important; 
+                border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            }
+        }
+
+        .cards-area { flex: 3; padding: 20px; overflow-y: auto; height: 100vh; }
+        
         .text-area-container { 
             flex: 1; display: flex; flex-direction: column; 
             background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
+            padding: 20px; height: 100vh;
         }
+
         .title { 
             color: var(--cyan); font-size: 1rem; font-weight: bold; text-transform: uppercase; 
             margin: 10px 0 15px 0; border-left: 3px solid var(--cyan); padding-left: 10px;
         }
+
+        /* DİNAMİK IZGARA: Masaüstü 5, Tablet 3, Mobil 2 sütun */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 15px; 
+            width: 100%; 
+        }
+
+        @media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 
         /* BUTON STİLİ */
         #allOpenBtn {
@@ -36,20 +62,16 @@
             text-transform: uppercase;
             font-size: 0.9rem;
             letter-spacing: 1px;
+            width: 100%;
         }
         #allOpenBtn:hover:not(:disabled) {
             background: var(--cyan);
             color: var(--bg);
             box-shadow: 0 0 15px var(--cyan);
         }
-        #allOpenBtn:disabled {
-            border-color: #f44336;
-            color: #f44336;
-            cursor: not-allowed;
-            opacity: 0.8;
-        }
+        #allOpenBtn:disabled { border-color: #f44336; color: #f44336; cursor: not-allowed; opacity: 0.8; }
 
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; }
+        /* KARTLAR */
         .card { 
             width: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; 
             opacity: 0; transform: translateY(15px); transition: opacity 0.4s, transform 0.4s; 
@@ -65,7 +87,7 @@
         textarea { 
             flex: 1; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); color: var(--cyan); 
-            padding: 15px; border-radius: 10px; resize: none; outline: none;
+            padding: 15px; border-radius: 10px; resize: none; outline: none; font-size: 1rem;
         }
 
         /* RENKLER */
@@ -75,14 +97,14 @@
         .kirmizi { border-color: #ff929d; }
         .yesil { border-color: #a7eaa3; }
         .magenta { border-color: #f3c5f6; }
-        .siyah { border-color: black; }
+        .siyah { border-color: #000000; }
     </style>
 </head>
 <body>
 
 <div class="cards-area">
     <div class="title">Kural Kartı</div>
-    <div class="grid" style="grid-template-columns: repeat(5, 120px);" id="kuralGrid"></div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));" id="kuralGrid"></div>
     <div class="title">Oyun Kartları</div>
     <div class="grid" id="oyunGrid"></div>
 </div>
@@ -95,12 +117,10 @@
 </div>
 
 <script>
-    // ************************************************************
-    // AYARLAR PANELİ
-    // ************************************************************
-    const ZAMANLAYICI_AKTIF = true; // true: Otomatik kapanır, false: Süresiz açık kalır
-    const TOPLAM_SANIYE = 125;      // Kartlar kaç saniye açık kalsın? (Örn: 125s = 02:05)
-    const ACILIS_GECIKMESI = 30;    // Kartların ardışık açılma hızı (ms)
+    // AYARLAR
+    const ZAMANLAYICI_AKTIF = true; 
+    const TOPLAM_SANIYE = 125;      
+    const ACILIS_GECIKMESI = 30;    
 
     const KURAL_AYAR = { dagitilacak: 1, havuz: 20 };
     const OYUN_AYARLARI = {
@@ -108,10 +128,9 @@
         'mavi':    { dagitilacak: 20, havuz: 100 },
         'kirmizi': { dagitilacak: 20, havuz: 20 },
         'yesil':   { dagitilacak: 20, havuz: 100 },
-        'magenta':     { dagitilacak: 20, havuz: 100 },
-        'siyah': { dagitilacak: 20, havuz: 100 }
+        'magenta': { dagitilacak: 20, havuz: 100 },
+        'siyah':   { dagitilacak: 20, havuz: 100 }
     };
-    // ************************************************************
     
     let tumKartlar = [];
     let isAllOpen = false;
@@ -142,6 +161,7 @@
     let oyunData = [];
     for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
         randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
+            // Uzantıları klasöründeki gerçek uzantılarla eşleşecek şekilde ayarla (.jpeg veya .jpg)
             oyunData.push({ color: renk, front: `${renk}_on_${no}.jpg`, back: `${renk}_arka.jpeg` });
         });
     }
@@ -168,7 +188,6 @@
     
     btn.onclick = () => {
         if (!isAllOpen) {
-            // AÇMA İŞLEMİ
             isAllOpen = true;
             btn.disabled = true;
             btn.innerText = "Açılıyor...";
@@ -185,7 +204,6 @@
                             const timerInterval = setInterval(() => {
                                 btn.innerText = `Kalan: ${formatTime(timeLeft)}`;
                                 timeLeft--;
-
                                 if(timeLeft < 0) {
                                     clearInterval(timerInterval);
                                     kapatmaIslemi();
@@ -199,7 +217,6 @@
                 }, index * ACILIS_GECIKMESI);
             });
         } else {
-            // MANUEL KAPATMA (Zamanlayıcı kapalıysa çalışır)
             kapatmaIslemi();
         }
     };
