@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kart Sistemi - Optimize Versiyon</title>
+    <title>Görünmez Kentler Online</title>
     <style>
         :root { --bg: #0d2323; --cyan: #22d3ee; }
         * { box-sizing: border-box; }
@@ -67,15 +67,13 @@
 
 <div class="cards-area">
     <div class="title">Kural Kartı</div>
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));" id="kuralGrid"></div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));" id="kuralGrid"></div>
     <div class="title">Oyun Kartları</div>
     <div class="grid" id="oyunGrid"></div>
 </div>
 
 <div class="text-area-container">
-    <div class="title">Notlar</div>
     <textarea id="autoTextarea" placeholder="Yazdıkça uzar..." oninput="autoResize(this)"></textarea>
-    <div class="title">Kontrol Paneli</div>
     <button id="allOpenBtn">Hepsini Aç</button>
 </div>
 
@@ -87,14 +85,14 @@
     const TOPLAM_SANIYE = 125;      
     const ACILIS_GECIKMESI = 30;    
 
-    const KURAL_AYAR = { dagitilacak: 1, havuz: 20 };
+    const KURAL_AYAR = { dagitilacak: 1, havuz: 24 };
     const OYUN_AYARLARI = {
-        'sari':    { dagitilacak: 20, havuz: 100 },
-        'mavi':    { dagitilacak: 20, havuz: 100 },
-        'kirmizi': { dagitilacak: 20, havuz: 20 },
-        'yesil':   { dagitilacak: 20, havuz: 100 },
-        'magenta': { dagitilacak: 20, havuz: 100 },
-        'siyah':   { dagitilacak: 20, havuz: 100 }
+        'sari':    { dagitilacak: 7, havuz: 40 },
+        'mavi':    { dagitilacak: 3, havuz: 15 },
+        'kirmizi': { dagitilacak: 4, havuz: 20 },
+        'yesil':   { dagitilacak: 1, havuz: 5 },
+        'magenta': { dagitilacak: 1, havuz: 5 },
+        'siyah':   { dagitilacak: 4, havuz: 20 }
     };
     
     let tumKartlar = [];
