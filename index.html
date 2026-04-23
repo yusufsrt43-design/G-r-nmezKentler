@@ -73,7 +73,7 @@
 </div>
 
 <div class="text-area-container">
-    <textarea id="autoTextarea" placeholder="Yazdıkça uzar..." oninput="autoResize(this)"></textarea>
+    <textarea id="autoTextarea" placeholder="Hikayenizi buraya yazın..." oninput="autoResize(this)"></textarea>
     <button id="allOpenBtn">Hepsini Aç</button>
 </div>
 
@@ -82,17 +82,17 @@
 
     // AYARLAR (WebP Formatına Göre Ayarlandı)
     const ZAMANLAYICI_AKTIF = true; 
-    const TOPLAM_SANIYE = 125;      
+    const TOPLAM_SANIYE = 1200;      
     const ACILIS_GECIKMESI = 30;    
 
     const KURAL_AYAR = { dagitilacak: 1, havuz: 24 };
     const OYUN_AYARLARI = {
         'sari':    { dagitilacak: 7, havuz: 40 },
         'mavi':    { dagitilacak: 3, havuz: 15 },
-        'kirmizi': { dagitilacak: 4, havuz: 20 },
+        'kirmizi': { dagitilacak: 3, havuz: 15 },
         'yesil':   { dagitilacak: 1, havuz: 5 },
         'magenta': { dagitilacak: 1, havuz: 5 },
-        'siyah':   { dagitilacak: 4, havuz: 20 }
+        'siyah':   { dagitilacak: 5, havuz: 20 }
     };
     
     let tumKartlar = [];
