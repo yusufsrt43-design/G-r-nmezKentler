@@ -3,55 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler v5 - Odaklanmış Kural Kartı</title>
+    <title>Görünmez Kentler v5</title>
     <style>
         :root { --bg: #0d2323; --box-bg: #e5fcfb; --accent: #7cffae; }
         * { box-sizing: border-box; }
-        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: center; overflow: hidden; }
 
-        .main-wrapper { display: flex; flex-direction: row; gap: 20px; width: 100%; max-width: 1400px; height: 92vh; }
+        .main-wrapper { display: flex; flex-direction: row; gap: 30px; width: 100%; max-width: 1600px; height: 95vh; align-items: stretch; }
 
-        /* SOL TARAF: KART SLIDER */
-        .left-section { flex: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
-        .slider-container { display: flex; align-items: center; width: 100%; gap: 10px; justify-content: center; }
+        /* SOL TARAF: KART ALANI */
+        .left-section { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 0; }
+        
+        .slider-container { display: flex; align-items: center; width: 100%; gap: 15px; justify-content: center; flex: 1; }
         
         .card-grid { 
-            display: grid; grid-template-columns: repeat(2, minmax(100px, 150px)); gap: 12px;
-            background: rgba(255,255,255,0.02); padding: 20px; border-radius: 15px; min-height: 450px; align-items: center; justify-content: center;
+            display: grid; gap: 20px; 
+            padding: 20px; border-radius: 15px; background: rgba(255,255,255,0.02);
+            width: 100%; height: 100%; align-content: center; justify-items: center;
         }
 
-        /* KART TASARIMI - 827x1417 Oranı */
-        .card { width: 100%; aspect-ratio: 827 / 1417; perspective: 1000px; display: none; margin: auto; }
+        /* GRID MODLARI */
+        .card-grid.kural-mode { grid-template-columns: 1fr; } /* Tek büyük kart */
+        .card-grid.oyun-mode { grid-template-columns: repeat(2, 1fr); } /* 2x2 yerleşim */
+
+        /* KART TASARIMI - 827x1417 */
+        .card { width: auto; height: 100%; max-height: 70vh; aspect-ratio: 827 / 1417; perspective: 1000px; display: none; }
         .card.active { display: block; }
         
-        /* KURAL KARTI ÖZEL (BÜYÜK VE ORTALI) */
-        .card.is-kural { 
-            grid-column: 1 / span 2; /* İki sütunu kapla */
-            max-width: 260px;       /* Diğerlerinden daha geniş */
-            transform: scale(1.1);   /* Hafif büyüme efekti */
-        }
+        /* Kural Kartı Daha Büyük */
+        .card.is-kural { max-height: 80vh; }
 
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; border: 4px solid #000; overflow: hidden; background: #fff; }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; border: 4px solid #000; overflow: hidden; background: #fff; }
         .front { transform: rotateY(180deg); }
         img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 
         /* NAVİGASYON */
-        .nav-btn { background: black; color: white; border: 1px solid var(--accent); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        .nav-btn { background: black; color: white; border: 1px solid var(--accent); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 24px; transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 10; }
         .nav-btn:hover { background: var(--accent); color: black; }
-        .nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-        .dots-container { display: flex; gap: 10px; align-items: center; }
-        .dot { width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.3; transition: 0.3s; cursor: pointer; }
-        .dot.active { opacity: 1; background: var(--accent); transform: scale(1.4); }
+        .nav-btn:disabled { opacity: 0.1; cursor: not-allowed; }
+
+        .dots-container { display: flex; gap: 12px; height: 30px; align-items: center; }
+        .dot { width: 12px; height: 12px; background: white; border-radius: 50%; opacity: 0.3; transition: 0.3s; cursor: pointer; }
+        .dot.active { opacity: 1; background: var(--accent); transform: scale(1.5); }
 
         /* SAĞ TARAF: YAZI ALANI */
-        .right-section { flex: 1; background: var(--box-bg); border: 5px solid #000; display: flex; flex-direction: column; border-radius: 8px; overflow: hidden; }
-        .top-bar { display: flex; border-bottom: 4px solid #000; }
-        .top-bar button { flex: 1; padding: 20px; font-size: 24px; font-weight: bold; border: none; background: white; cursor: pointer; transition: 0.3s; }
-        #downloadBtn { border-left: 4px solid #000; }
+        .right-section { flex: 1; background: var(--box-bg); border: 5px solid #000; display: flex; flex-direction: column; border-radius: 10px; }
+        .top-bar { display: flex; border-bottom: 5px solid #000; }
+        .top-bar button { flex: 1; padding: 25px; font-size: 26px; font-weight: bold; border: none; background: white; cursor: pointer; }
+        #downloadBtn { border-left: 5px solid #000; }
         .top-bar button:hover:not(:disabled) { background: var(--accent); }
-        textarea { flex: 1; width: 100%; padding: 20px; font-size: 18px; border: none; outline: none; resize: none; background: transparent; line-height: 1.5; }
+        textarea { flex: 1; width: 100%; padding: 25px; font-size: 18px; border: none; outline: none; resize: none; background: transparent; line-height: 1.6; }
 
         /* RENK BORDERLARI[cite: 2] */
         .kural-border { border-color: #ffffff !important; }
@@ -62,9 +65,10 @@
         .magenta-border { border-color: #f3c5f6 !important; }
         .siyah-border { border-color: #000000 !important; }
 
-        @media (max-width: 850px) {
-            .main-wrapper { flex-direction: column; height: auto; }
-            .right-section { height: 400px; width: 100%; }
+        @media (max-width: 900px) {
+            .main-wrapper { flex-direction: column; height: auto; overflow-y: auto; }
+            .card { max-height: 400px; }
+            .right-section { height: 500px; width: 100%; }
         }
     </style>
 </head>
@@ -92,8 +96,8 @@
 <script>
     /* --- AYARLAR[cite: 2] --- */
     const ZAMAN_SANIYE = 1200; 
-    const ACILIS_HIZI = 50;   
-    const OYUN_KART_GRUBU = 4; // Oyun kartları her sekmede 4 tane olsun
+    const ACILIS_HIZI = 60;   
+    const OYUN_KART_GRUBU = 4; 
 
     const DAGITIM = {
         'sari':    { adet: 7, havuz: 40 },
@@ -103,7 +107,7 @@
         'magenta': { adet: 1, havuz: 5 },
         'siyah':   { adet: 5, havuz: 20 }
     };
-    const KURAL_HAVUZ = 24;
+    const KURAL_AYAR = { adet: 1, havuz: 24 };
 
     let tumKartlar = [];
     let currentGroupIndex = 0;
@@ -125,8 +129,8 @@
         dotsContainer.innerHTML = '';
         tumKartlar = [];
 
-        // 1. Kural Kartını Oluştur (Grup 0 - Büyük ve Ortalı)[cite: 2]
-        let kuralNo = randomPick(KURAL_HAVUZ, 1)[0];
+        // 1. Kural Kartı (Grup 0)[cite: 2]
+        let kuralNo = randomPick(KURAL_AYAR.havuz, 1)[0];
         addCardToDOM('kural', kuralNo, 'kural-border', 0, grid, true);
 
         // 2. Oyun Kartlarını Hazırla[cite: 2]
@@ -136,13 +140,12 @@
         }
         oyunKartlari.sort(() => Math.random() - 0.5);
 
-        // 3. Oyun Kartlarını 4'erli Gruplara Ayır (Grup 1'den başlar)[cite: 2]
+        // 3. Oyun Kartlarını 1. gruptan itibaren dağıt[cite: 2]
         oyunKartlari.forEach((data, index) => {
             const groupIndex = Math.floor(index / OYUN_KART_GRUBU) + 1;
             addCardToDOM(data.t, data.n, data.b, groupIndex, grid, false);
         });
 
-        // 4. Navigasyon Noktaları[cite: 1]
         totalGroups = Math.max(...tumKartlar.map(c => parseInt(c.dataset.group))) + 1;
         for(let i=0; i<totalGroups; i++) {
             const dot = document.createElement('div');
@@ -169,6 +172,11 @@
 
     function showGroup(index) {
         currentGroupIndex = index;
+        const grid = document.getElementById('cardGrid');
+        
+        // Grid Modunu Değiştir
+        grid.className = `card-grid ${index === 0 ? 'kural-mode' : 'oyun-mode'}`;
+
         tumKartlar.forEach(card => {
             card.classList.toggle('active', parseInt(card.dataset.group) === index);
         });
@@ -184,10 +192,8 @@
         if(target >= 0 && target < totalGroups) showGroup(target);
     }
 
-    // BAŞLAT BUTONU[cite: 2]
     document.getElementById('startBtn').onclick = function() {
         this.disabled = true;
-        this.innerText = "Açılıyor...";
         let c = 0;
         tumKartlar.forEach((card, i) => {
             setTimeout(() => {
@@ -210,7 +216,6 @@
         }, 1000);
     }
 
-    // İNDİR BUTONU[cite: 1]
     document.getElementById('downloadBtn').onclick = () => {
         const val = document.getElementById('storyText').value;
         if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");[cite: 1]
