@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler - 827x1417 Versiyon</title>
+    <title>Görünmez Kentler - Sabit Kural Kartlı Sistem</title>
     <style>
         :root { --bg: #0d2323; --box-bg: #e5fcfb; --accent: #7cffae; }
         * { box-sizing: border-box; }
@@ -13,37 +13,25 @@
 
         /* SOL TARAF: KART SLIDER */
         .left-section { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
-        
         .slider-container { display: flex; align-items: center; width: 100%; gap: 10px; }
-        
         .card-grid { 
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1;
-            background: rgba(255,255,255,0.02); padding: 10px; border-radius: 10px;
+            background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px;
         }
 
         /* KART TASARIMI - 827x1417 Oranı */
         .card { width: 100%; aspect-ratio: 827 / 1417; perspective: 1000px; display: none; }
         .card.active { display: block; }
-        
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
-        
-        .face { 
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-            border-radius: 8px; border: 3px solid #000; overflow: hidden; background: #fff;
-        }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; border: 4px solid #000; overflow: hidden; background: #fff; }
         .front { transform: rotateY(180deg); }
         img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 
         /* NAVİGASYON */
-        .nav-btn { 
-            background: black; color: white; border: 1px solid var(--accent); 
-            width: 40px; height: 40px; border-radius: 50%; cursor: pointer; 
-            font-size: 20px; transition: 0.3s; display: flex; align-items: center; justify-content: center;
-        }
+        .nav-btn { background: black; color: white; border: 1px solid var(--accent); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
         .nav-btn:hover { background: var(--accent); color: black; }
         .nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-
         .dots-container { display: flex; gap: 10px; align-items: center; }
         .dot { width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.3; transition: 0.3s; cursor: pointer; }
         .dot.active { opacity: 1; background: var(--accent); transform: scale(1.4); }
@@ -54,7 +42,6 @@
         .top-bar button { flex: 1; padding: 20px; font-size: 22px; font-weight: bold; border: none; background: white; cursor: pointer; transition: 0.3s; }
         #downloadBtn { border-left: 4px solid #000; }
         .top-bar button:hover:not(:disabled) { background: var(--accent); }
-        
         textarea { flex: 1; width: 100%; padding: 15px; font-size: 16px; border: none; outline: none; resize: none; background: transparent; line-height: 1.5; }
 
         /* RENK BORDERLARI[cite: 2] */
@@ -67,7 +54,7 @@
         .siyah-border { border-color: #000000 !important; }
 
         @media (max-width: 900px) {
-            .main-wrapper { flex-direction: column; height: auto; padding-bottom: 40px; }
+            .main-wrapper { flex-direction: column; height: auto; }
             .left-section, .right-section { width: 100%; }
             .right-section { height: 450px; }
         }
@@ -128,13 +115,24 @@
         const dotsContainer = document.getElementById('dotsContainer');
         
         let dataPool = [];
-        randomPick(KURAL.havuz, KURAL.adet).forEach(n => dataPool.push({t:'kural', n, b:'kural-border'}));
+        
+        // 1. KURAL KARTINI SEÇ VE EN BAŞA KOY[cite: 2]
+        let kuralNo = randomPick(KURAL.havuz, KURAL.adet)[0];
+        dataPool.push({t:'kural', n: kuralNo, b:'kural-border'});
+
+        // 2. OYUN KARTLARINI SEÇ[cite: 2]
+        let oyunKartlari = [];
         for (const [r, a] of Object.entries(DAGITIM)) {
-            randomPick(a.havuz, a.adet).forEach(n => dataPool.push({t:r, n, b:r+'-border'}));
+            randomPick(a.havuz, a.adet).forEach(n => oyunKartlari.push({t:r, n, b:r+'-border'}));
         }
-        dataPool.sort(() => Math.random() - 0.5);
+        // Oyun kartlarını kendi içinde karıştır[cite: 2]
+        oyunKartlari.sort(() => Math.random() - 0.5);
+
+        // Havuzu birleştir (İlk kart her zaman kural kartı kalır)
+        dataPool = dataPool.concat(oyunKartlari);
 
         totalGroups = Math.ceil(dataPool.length / KART_GRUBU);
+        
         dataPool.forEach((data, index) => {
             const groupIndex = Math.floor(index / KART_GRUBU);
             const card = document.createElement('div');
@@ -175,9 +173,10 @@
         if(target >= 0 && target < totalGroups) showGroup(target);
     }
 
-    /* --- BUTON İŞLEVLERİ --- */
+    // BAŞLAT[cite: 2]
     document.getElementById('startBtn').onclick = function() {
         this.disabled = true;
+        this.innerText = "Yükleniyor...";
         let c = 0;
         tumKartlar.forEach((card, i) => {
             setTimeout(() => {
@@ -200,18 +199,18 @@
         }, 1000);
     }
 
+    // İNDİR[cite: 1]
     document.getElementById('downloadBtn').onclick = () => {
         const val = document.getElementById('storyText').value;
-        if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");[cite: 1]
+        if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");
         const blob = new Blob([val], {type:'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = "hikayem.txt";[cite: 1]
+        a.download = "hikayem.txt";
         a.click();
     };
 
     window.onload = init;
 </script>
-
 </body>
 </html>
