@@ -16,104 +16,84 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        /* MOBİL DÜZEN */
+        /* --- MOBİL DÜZEN --- */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow-y: auto; height: auto; }
-            .text-area-container { order: 2; width: 100%; height: auto !important; border: none; padding: 15px; }
+            .text-area-container { order: 2; width: 100%; height: auto; border: none; padding: 15px; }
             
-            /* KART ALANI VE HİZALAMALAR */
             .cards-area { 
-                order: 1; 
-                width: 100%; 
-                height: 65vh !important; 
-                padding: 15px 0 !important; 
-                display: flex; 
-                flex-direction: column; 
+                order: 1; width: 100%; height: 65vh; padding: 15px 0; 
+                display: flex; flex-direction: column; 
             }
             
-            /* Kaydırma alanı artık oklara kadar olan tüm yüksekliği kaplıyor */
-            .carousel { flex: 1 !important; height: auto !important; } 
+            .carousel { flex: 1; height: auto; } 
             
             .grid-4 { 
-                grid-template-columns: 1fr 1fr !important; 
-                grid-template-rows: 1fr 1fr !important;    
-                gap: 10px !important;
+                grid-template-columns: 1fr 1fr; 
+                grid-template-rows: 1fr 1fr; gap: 10px;
             }
             
-            /* KURAL KARTI TAM ORTALAMA SİSTEMİ (NİHAYET!) */
-            .page { padding: 0 !important; } 
-            .grid-1 { 
-                display: flex; 
-                align-items: center; 
-                justify-content: center; 
-                height: 100%; 
-                width: 100%; 
-            }
+            /* Mobil Kural Kartı */
+            .page { padding: 0; } 
+            .grid-1 { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
             .grid-1 .card { 
-                width: 65% !important; /* Göze daha zarif gelmesi için %70'ten %65'e çektim */
-                height: auto !important; 
-                max-width: 260px !important;
-                margin: auto !important; /* Kartı her koşulda merkeze kilitler */
+                width: 65%; height: auto; max-width: 260px; margin: auto; 
             }
 
-            /* MOBİL BUTONLARI AÇ, PC BUTONLARINI GİZLE */
-            .pc-arrow { display: none !important; }
-            .mobile-arrow { display: flex !important; width: 35px; height: 35px; font-size: 1.2rem; }
-            .bottom-controls { width: 100%; margin-top: 5px !important; }
+            /* Buton Görünümleri */
+            .pc-arrow { display: none; }
+            .mobile-arrow { display: flex; width: 35px; height: 35px; font-size: 1.2rem; }
+            .bottom-controls { width: 100%; margin-top: 5px; }
         }
 
-        /* ANA ALANLAR */
+        /* --- ANA ALANLAR --- */
         .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; padding: 20px; }
         .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100vh; }
         
-        /* CAROUSEL (SAYFALAMA) YAPISI */
+        /* --- CAROUSEL YAPISI --- */
         .carousel { position: relative; width: 100%; max-width: 1400px; height: 85%; display: flex; align-items: center; overflow: hidden; }
-        .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
         .page { min-width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 10px; }
         
-        /* IZGARALAR */
-        /* 1. Sayfa (Kural Kartı) */
+        /* --- IZGARALAR --- */
         .grid-1 { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
         .grid-1 .card { height: 80%; width: auto; max-height: 600px; aspect-ratio: 827 / 1417; margin: auto; }
         
-        /* Diğer Sayfalar (Oyun Kartları) - PC'de 4 Yan Yana */
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; height: 100%; align-items: center; justify-items: center; }
         .grid-4 .card { width: 100%; max-width: 280px; margin: auto; }
 
-        /* YÖNLENDİRME BUTONLARI & NOKTALAR */
-        .nav-btn { background: rgba(0,0,0,0.5); color: white; border: 2px solid white; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; z-index: 10; }
+        /* --- KONTROLLER (OKLAR VE NOKTALAR) --- */
+        .nav-btn { background: rgba(0,0,0,0.5); color: white; border: 2px solid white; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.3s, color 0.3s; z-index: 10; }
         .nav-btn:hover { background: var(--cyan); color: black; }
         
-        /* PC Okları (Kenarlarda) */
         .pc-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 45px; height: 45px; font-size: 1.4rem; }
         .pc-arrow.prev { left: 10px; }
         .pc-arrow.next { right: 10px; }
 
-        /* Mobil Oklar & Noktalar İçin Alt Kapsayıcı */
         .bottom-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 15px; z-index: 10; }
-        .mobile-arrow { display: none; } /* Default olarak PC'de gizli */
+        .mobile-arrow { display: none; } 
         
         .dots { display: flex; gap: 8px; }
-        .dot { width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .dot { width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%; cursor: pointer; transition: transform 0.3s, background 0.3s; }
         .dot.active { background: var(--cyan); transform: scale(1.3); }
 
-        /* BUTONLAR & TEXTAREA */
+        /* --- BUTONLAR & METİN ALANI --- */
         .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .action-btn { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; flex: 1; transition: 0.3s; }
         .action-btn:hover:not(:disabled) { background: var(--cyan); color: var(--bg); box-shadow: 0 0 10px var(--cyan); }
         textarea { width: 100%; flex: 1; min-height: 150px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--cyan); padding: 12px; border-radius: 8px; resize: none; outline: none; overflow-y: auto; transition: 0.3s; }
 
-        /* KARTLAR */
-        .card { aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; opacity: 0; transform: translateY(10px); transition: 0.4s; }
+        /* --- KARTLAR --- */
+        .card { aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; opacity: 0; transform: translateY(10px); transition: opacity 0.4s, transform 0.4s; will-change: transform, opacity; }
         .card.visible { opacity: 1; transform: translateY(0); }
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; will-change: transform; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; overflow: hidden; }
         .back { border: 2.5px solid; } 
         .front { transform: rotateY(180deg); background: white; }
         img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-        /* RENK BORDERLARI */
+        /* --- RENK KODLARI --- */
         .kural-ozel { border-color: #ffffff; }
         .sari { border-color: #e3f498; }
         .mavi { border-color: #92e8f7; }
@@ -132,7 +112,6 @@
         <button class="nav-btn next pc-arrow" onclick="moveSlide(1)">&#10095;</button>
     </div>
     
-    <!-- Alt Kontroller (Mobilde oklar buraya dahil olur) -->
     <div class="bottom-controls">
         <button class="nav-btn mobile-arrow" onclick="moveSlide(-1)">&#10094;</button>
         <div class="dots" id="dotsContainer"></div>
@@ -149,173 +128,196 @@
 </div>
 
 <script>
-    // AYARLAR
-    const ZAMANLAYICI_AKTIF = true; 
-    const TOPLAM_SANIYE = 1200;      
-    const ACILIS_GECIKMESI = 30;    
+    // --- DOM ELEMENTLERİ (Önbellekleme) ---
+    const elements = {
+        track: document.getElementById('carouselTrack'),
+        dots: document.getElementById('dotsContainer'),
+        startBtn: document.getElementById('allOpenBtn'),
+        downloadBtn: document.getElementById('downloadBtn'),
+        textArea: document.getElementById('autoTextarea')
+    };
 
-    const KURAL_AYAR = { dagitilacak: 1, havuz: 24 };
-    const OYUN_AYARLARI = {
-        'sari':    { dagitilacak: 7, havuz: 40 },
-        'mavi':    { dagitilacak: 3, havuz: 15 },
-        'kirmizi': { dagitilacak: 3, havuz: 15 },
-        'yesil':   { dagitilacak: 1, havuz: 5 },
-        'magenta': { dagitilacak: 1, havuz: 5 },
-        'siyah':   { dagitilacak: 5, havuz: 20 }
+    // --- AYARLAR ---
+    const CONFIG = {
+        ZAMANLAYICI_AKTIF: true, 
+        TOPLAM_SANIYE: 1200,      
+        ACILIS_GECIKMESI: 30,    
+        KURAL: { dagitilacak: 1, havuz: 17 },
+        OYUN: {
+            'sari':    { dagitilacak: 7, havuz: 40 },
+            'mavi':    { dagitilacak: 3, havuz: 15 },
+            'kirmizi': { dagitilacak: 3, havuz: 15 },
+            'yesil':   { dagitilacak: 1, havuz: 5 },
+            'magenta': { dagitilacak: 1, havuz: 5 },
+            'siyah':   { dagitilacak: 5, havuz: 20 }
+        }
     };
     
-    let tumKartlarEls = [];
-    let isAllOpen = false;
-    let timerInterval;
+    let state = {
+        cards: [],
+        isAllOpen: false,
+        timerInterval: null,
+        currentSlide: 0,
+        totalPages: 0
+    };
 
-    function formatTime(s) { return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+    // --- YARDIMCI FONKSİYONLAR ---
+    const formatTime = (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+    
+    const getRandomNumbers = (max, count) => {
+        const nums = new Set();
+        while(nums.size < count) nums.add(Math.floor(Math.random() * max) + 1);
+        return [...nums];
+    };
 
-    function randomNumbers(max, count) {
-        let n = [];
-        while(n.length < count) {
-            let r = Math.floor(Math.random() * max) + 1;
-            if(!n.includes(r)) n.push(r);
-        }
-        return n;
-    }
-
-    function createCardElement(card, delayIndex) {
+    const createCardElement = (cardData, delayIndex) => {
         const div = document.createElement('div');
         div.className = 'card';
-        div.innerHTML = `<div class="card-inner">
-            <div class="face back ${card.color}"><img src="${card.back}" loading="lazy"></div>
-            <div class="face front"><img src="${card.front}" loading="lazy"></div>
-        </div>`;
-        div.onclick = () => div.classList.toggle('flipped');
+        div.innerHTML = `
+            <div class="card-inner">
+                <div class="face back ${cardData.color}"><img src="${cardData.back}" loading="lazy"></div>
+                <div class="face front"><img src="${cardData.front}" loading="lazy"></div>
+            </div>`;
+        div.addEventListener('click', () => div.classList.toggle('flipped'));
         setTimeout(() => div.classList.add('visible'), delayIndex * 12);
         return div;
-    }
+    };
 
-    // 1. Kural Kartı
-    let kuralKartlari = randomNumbers(KURAL_AYAR.havuz, KURAL_AYAR.dagitilacak).map((no, i) => {
-        return createCardElement({ color: 'kural-ozel', front: `kural_on_${no}.webp`, back: `kural_arka.webp` }, i);
-    });
-    tumKartlarEls.push(...kuralKartlari);
-
-    // 2. Oyun Kartları
+    // --- KARTLARI OLUŞTURMA ---
+    const kuralKartlari = getRandomNumbers(CONFIG.KURAL.havuz, CONFIG.KURAL.dagitilacak).map((no, i) => 
+        createCardElement({ color: 'kural-ozel', front: `kural_on_${no}.webp`, back: `kural_arka.webp` }, i)
+    );
+    
     let oyunData = [];
-    for (const [renk, ayar] of Object.entries(OYUN_AYARLARI)) {
-        randomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
+    for (const [renk, ayar] of Object.entries(CONFIG.OYUN)) {
+        getRandomNumbers(ayar.havuz, ayar.dagitilacak).forEach(no => {
             oyunData.push({ color: renk, front: `${renk}_on_${no}.webp`, back: `${renk}_arka.webp` });
         });
     }
+    // Performanslı dizi karıştırma (Fisher-Yates yaklaşımı basit hali)
     oyunData.sort(() => Math.random() - 0.5); 
-    let oyunKartlari = oyunData.map((c, i) => createCardElement(c, i + KURAL_AYAR.dagitilacak));
-    tumKartlarEls.push(...oyunKartlari);
+    
+    const oyunKartlari = oyunData.map((c, i) => createCardElement(c, i + CONFIG.KURAL.dagitilacak));
+    state.cards = [...kuralKartlari, ...oyunKartlari];
 
-    // --- SAYFALAMA SİSTEMİ ---
-    const track = document.getElementById('carouselTrack');
-    const dotsContainer = document.getElementById('dotsContainer');
-    let totalPages = 0;
+    // --- SAYFALAMA SİSTEMİ (DocumentFragment Kullanımı) ---
+    const trackFragment = document.createDocumentFragment();
+    const dotsFragment = document.createDocumentFragment();
 
-    if (kuralKartlari.length > 0) {
-        let pageDiv = document.createElement('div');
+    const addPage = (cardsEl, isGrid1 = false) => {
+        const pageDiv = document.createElement('div');
         pageDiv.className = 'page';
-        let gridDiv = document.createElement('div');
-        gridDiv.className = 'grid-1';
-        kuralKartlari.forEach(k => gridDiv.appendChild(k));
+        const gridDiv = document.createElement('div');
+        gridDiv.className = isGrid1 ? 'grid-1' : 'grid-4';
+        
+        cardsEl.forEach(card => gridDiv.appendChild(card));
         pageDiv.appendChild(gridDiv);
-        track.appendChild(pageDiv);
-        totalPages++;
-    }
+        trackFragment.appendChild(pageDiv);
 
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (state.totalPages === 0 ? ' active' : '');
+        const pageIndex = state.totalPages; // Closure için
+        dot.addEventListener('click', () => goToSlide(pageIndex));
+        dotsFragment.appendChild(dot);
+        
+        state.totalPages++;
+    };
+
+    if (kuralKartlari.length > 0) addPage(kuralKartlari, true);
+    
     for (let i = 0; i < oyunKartlari.length; i += 4) {
-        let pageDiv = document.createElement('div');
-        pageDiv.className = 'page';
-        let gridDiv = document.createElement('div');
-        gridDiv.className = 'grid-4';
-        
-        for (let j = 0; j < 4 && (i + j) < oyunKartlari.length; j++) {
-            gridDiv.appendChild(oyunKartlari[i + j]);
-        }
-        
-        pageDiv.appendChild(gridDiv);
-        track.appendChild(pageDiv);
-        totalPages++;
+        addPage(oyunKartlari.slice(i, i + 4));
     }
 
-    for (let i = 0; i < totalPages; i++) {
-        let dot = document.createElement('div');
-        dot.className = 'dot' + (i === 0 ? ' active' : '');
-        dot.onclick = () => goToSlide(i);
-        dotsContainer.appendChild(dot);
-    }
+    // Toplu DOM eklemesi (Performans sıçraması)
+    elements.track.appendChild(trackFragment);
+    elements.dots.appendChild(dotsFragment);
+    const dotElements = document.querySelectorAll('.dot'); // Eklendikten sonra seçilir
 
-    let currentSlide = 0;
-    function moveSlide(dir) {
-        let newSlide = currentSlide + dir;
-        if (newSlide >= totalPages) newSlide = 0;
-        if (newSlide < 0) newSlide = totalPages - 1;
+    // --- SLİDER MANTIĞI ---
+    window.moveSlide = (dir) => {
+        let newSlide = state.currentSlide + dir;
+        if (newSlide >= state.totalPages) newSlide = 0;
+        if (newSlide < 0) newSlide = state.totalPages - 1;
         goToSlide(newSlide);
-    }
+    };
 
-    function goToSlide(index) {
-        currentSlide = index;
-        track.style.transform = `translateX(-${currentSlide * 100}%)`;
-        document.querySelectorAll('.dot').forEach((d, i) => {
-            d.classList.toggle('active', i === currentSlide);
-        });
-    }
+    const goToSlide = (index) => {
+        state.currentSlide = index;
+        elements.track.style.transform = `translateX(-${state.currentSlide * 100}%)`;
+        dotElements.forEach((d, i) => d.classList.toggle('active', i === state.currentSlide));
+    };
 
-    // SÜRÜKLEME (SWIPE) KONTROLÜ
+    // --- SÜRÜKLEME (SWIPE) KONTROLÜ ---
     let touchStartX = 0;
-    let touchEndX = 0;
-
-    track.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
-    track.addEventListener('touchend', e => { 
-        touchEndX = e.changedTouches[0].screenX; 
-        const threshold = 50; 
-        if (touchStartX - touchEndX > threshold) moveSlide(1); 
-        if (touchEndX - touchStartX > threshold) moveSlide(-1); 
+    
+    elements.track.addEventListener('touchstart', e => { 
+        touchStartX = e.changedTouches[0].screenX; 
+    }, {passive: true});
+    
+    elements.track.addEventListener('touchend', e => { 
+        const touchEndX = e.changedTouches[0].screenX; 
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) moveSlide(diff > 0 ? 1 : -1); 
     }, {passive: true});
 
-    // BAŞLAT BUTONU
-    const btn = document.getElementById('allOpenBtn');
-    btn.onclick = () => {
-        if (!isAllOpen) {
-            isAllOpen = true; btn.disabled = true; btn.innerText = "Açılıyor...";
+    // --- BAŞLAT BUTONU ---
+    const resetTimer = () => {
+        if(state.timerInterval) clearInterval(state.timerInterval);
+        state.cards.forEach(c => c.classList.remove('flipped'));
+        elements.startBtn.disabled = false; 
+        elements.startBtn.innerText = "Baştan Başlat"; 
+        state.isAllOpen = false;
+    };
+
+    elements.startBtn.addEventListener('click', () => {
+        if (!state.isAllOpen) {
+            state.isAllOpen = true; 
+            elements.startBtn.disabled = true; 
+            elements.startBtn.innerText = "Açılıyor...";
+            
             let count = 0;
-            tumKartlarEls.forEach((card, index) => {
+            state.cards.forEach((card, index) => {
                 setTimeout(() => {
                     card.classList.add('flipped');
                     count++;
-                    if(count === tumKartlarEls.length) {
-                        if (ZAMANLAYICI_AKTIF) {
-                            let timeLeft = TOPLAM_SANIYE;
-                            timerInterval = setInterval(() => {
-                                btn.innerText = `Kalan: ${formatTime(timeLeft)}`;
+                    if(count === state.cards.length) {
+                        if (CONFIG.ZAMANLAYICI_AKTIF) {
+                            let timeLeft = CONFIG.TOPLAM_SANIYE;
+                            state.timerInterval = setInterval(() => {
+                                elements.startBtn.innerText = `Kalan: ${formatTime(timeLeft)}`;
                                 timeLeft--;
-                                if(timeLeft < 0) { clearInterval(timerInterval); kapatmaIslemi(); }
+                                if(timeLeft < 0) resetTimer();
                             }, 1000);
-                        } else { btn.disabled = false; btn.innerText = "Hepsini Kapat"; }
+                        } else { 
+                            elements.startBtn.disabled = false; 
+                            elements.startBtn.innerText = "Hepsini Kapat"; 
+                        }
                     }
-                }, index * ACILIS_GECIKMESI);
+                }, index * CONFIG.ACILIS_GECIKMESI);
             });
-        } else { kapatmaIslemi(); }
-    };
+        } else { 
+            resetTimer(); 
+        }
+    });
 
-    function kapatmaIslemi() {
-        if(timerInterval) clearInterval(timerInterval);
-        tumKartlarEls.forEach(c => c.classList.remove('flipped'));
-        btn.disabled = false; btn.innerText = "Baştan Başlat"; isAllOpen = false;
-    }
-
-    // İNDİR BUTONU
-    document.getElementById('downloadBtn').onclick = () => {
-        const textContent = document.getElementById('autoTextarea').value;
-        if(textContent.trim() === "") { alert("İndirilecek bir hikaye bulunamadı. Lütfen önce bir şeyler yazın."); return; }
+    // --- İNDİR BUTONU ---
+    elements.downloadBtn.addEventListener('click', () => {
+        const textContent = elements.textArea.value.trim();
+        if(!textContent) { 
+            alert("İndirilecek bir hikaye bulunamadı. Lütfen önce bir şeyler yazın."); 
+            return; 
+        }
         const blob = new window.Blob([textContent], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = 'GorunmezKentler_Hikaye.txt';
-        document.body.appendChild(a); a.click();
-        document.body.removeChild(a); URL.revokeObjectURL(url);
-    };
+        a.href = url; 
+        a.download = 'GorunmezKentler_Hikaye.txt';
+        document.body.appendChild(a); 
+        a.click();
+        document.body.removeChild(a); 
+        URL.revokeObjectURL(url);
+    });
 </script>
 </body>
 </html>
