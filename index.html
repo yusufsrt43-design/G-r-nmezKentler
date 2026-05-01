@@ -16,37 +16,7 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        /* --- MOBİL DÜZEN --- */
-        @media (max-width: 768px) {
-            body { flex-direction: column; overflow-y: auto; height: auto; }
-            .text-area-container { order: 2; width: 100%; height: auto; border: none; padding: 15px; }
-            
-            .cards-area { 
-                order: 1; width: 100%; height: 65vh; padding: 15px 0; 
-                display: flex; flex-direction: column; 
-            }
-            
-            .carousel { flex: 1; height: auto; } 
-            
-            .grid-4 { 
-                grid-template-columns: 1fr 1fr; 
-                grid-template-rows: 1fr 1fr; gap: 10px;
-            }
-            
-            /* Mobil Kural Kartı */
-            .page { padding: 0; } 
-            .grid-1 { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-            .grid-1 .card { 
-                width: 65%; height: auto; max-width: 260px; margin: auto; 
-            }
-
-            /* Buton Görünümleri */
-            .pc-arrow { display: none; }
-            .mobile-arrow { display: flex; width: 35px; height: 35px; font-size: 1.2rem; }
-            .bottom-controls { width: 100%; margin-top: 5px; }
-        }
-
-        /* --- ANA ALANLAR --- */
+        /* --- ANA ALANLAR (Masaüstü) --- */
         .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; padding: 20px; }
         .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100vh; }
         
@@ -101,6 +71,36 @@
         .yesil { border-color: #a7eaa3; }
         .magenta { border-color: #f3c5f6; }
         .siyah { border-color: #000000; }
+
+        /* --- MOBİL DÜZEN (EN ALTTA OLMALI!) --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            .text-area-container { order: 2; width: 100%; height: auto; border: none; padding: 15px; }
+            
+            .cards-area { 
+                order: 1; width: 100%; height: 65vh; padding: 15px 0; 
+                display: flex; flex-direction: column; 
+            }
+            
+            .carousel { flex: 1; height: auto; } 
+            
+            .grid-4 { 
+                grid-template-columns: 1fr 1fr; 
+                grid-template-rows: 1fr 1fr; gap: 10px;
+            }
+            
+            /* Mobil Kural Kartı */
+            .page { padding: 0; } 
+            .grid-1 { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
+            .grid-1 .card { 
+                width: 65%; height: auto; max-width: 260px; margin: auto; 
+            }
+
+            /* Buton Görünümleri */
+            .pc-arrow { display: none; }
+            .mobile-arrow { display: flex; width: 35px; height: 35px; font-size: 1.2rem; }
+            .bottom-controls { width: 100%; margin-top: 5px; }
+        }
     </style>
 </head>
 <body>
@@ -194,13 +194,12 @@
             oyunData.push({ color: renk, front: `${renk}_on_${no}.webp`, back: `${renk}_arka.webp` });
         });
     }
-    // Performanslı dizi karıştırma (Fisher-Yates yaklaşımı basit hali)
     oyunData.sort(() => Math.random() - 0.5); 
     
     const oyunKartlari = oyunData.map((c, i) => createCardElement(c, i + CONFIG.KURAL.dagitilacak));
     state.cards = [...kuralKartlari, ...oyunKartlari];
 
-    // --- SAYFALAMA SİSTEMİ (DocumentFragment Kullanımı) ---
+    // --- SAYFALAMA SİSTEMİ ---
     const trackFragment = document.createDocumentFragment();
     const dotsFragment = document.createDocumentFragment();
 
@@ -216,7 +215,7 @@
 
         const dot = document.createElement('div');
         dot.className = 'dot' + (state.totalPages === 0 ? ' active' : '');
-        const pageIndex = state.totalPages; // Closure için
+        const pageIndex = state.totalPages; 
         dot.addEventListener('click', () => goToSlide(pageIndex));
         dotsFragment.appendChild(dot);
         
@@ -229,10 +228,9 @@
         addPage(oyunKartlari.slice(i, i + 4));
     }
 
-    // Toplu DOM eklemesi (Performans sıçraması)
     elements.track.appendChild(trackFragment);
     elements.dots.appendChild(dotsFragment);
-    const dotElements = document.querySelectorAll('.dot'); // Eklendikten sonra seçilir
+    const dotElements = document.querySelectorAll('.dot'); 
 
     // --- SLİDER MANTIĞI ---
     window.moveSlide = (dir) => {
