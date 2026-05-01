@@ -29,10 +29,10 @@
                 padding: 15px 0 !important; 
                 display: flex; 
                 flex-direction: column; 
-                justify-content: space-between; /* Carousel ile alt kontrolleri ayırır */
             }
             
-            .carousel { height: calc(100% - 50px) !important; } /* Alt kontrollere yer açar */
+            /* Kaydırma alanı artık oklara kadar olan tüm yüksekliği kaplıyor */
+            .carousel { flex: 1 !important; height: auto !important; } 
             
             .grid-4 { 
                 grid-template-columns: 1fr 1fr !important; 
@@ -40,8 +40,8 @@
                 gap: 10px !important;
             }
             
-            /* KURAL KARTI TAM ORTALAMA SİSTEMİ */
-            .page { padding: 0 !important; } /* Gereksiz boşlukları siler */
+            /* KURAL KARTI TAM ORTALAMA SİSTEMİ (NİHAYET!) */
+            .page { padding: 0 !important; } 
             .grid-1 { 
                 display: flex; 
                 align-items: center; 
@@ -50,10 +50,10 @@
                 width: 100%; 
             }
             .grid-1 .card { 
-                width: 70% !important; 
+                width: 65% !important; /* Göze daha zarif gelmesi için %70'ten %65'e çektim */
                 height: auto !important; 
                 max-width: 260px !important;
-                margin: 0 !important; /* Margin çakışmasını engeller, flex'e bırakır */
+                margin: auto !important; /* Kartı her koşulda merkeze kilitler */
             }
 
             /* MOBİL BUTONLARI AÇ, PC BUTONLARINI GİZLE */
