@@ -13,12 +13,14 @@
         body { 
             background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; 
             display: flex; height: 100vh; margin: 0; overflow: hidden;
+            /* Seçim ve sürüklemedeki mavi parlamayı engeller */
+            -webkit-tap-highlight-color: transparent; 
         }
 
         /* MOBİL DÜZEN (2x2 Yapı) */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow-y: auto; height: auto; }
-            .cards-area { order: 1; width: 100%; height: 65vh !important; padding: 10px; }
+            .cards-area { order: 1; width: 100%; height: 65vh !important; padding: 10px 0; }
             .text-area-container { order: 2; width: 100%; height: auto !important; border: none; padding: 15px; }
             
             .grid-4 { 
@@ -27,16 +29,18 @@
                 gap: 10px !important;
             }
             
-            /* KURAL KARTI MOBİL DÜZELTMESİ */
+            /* KURAL KARTI MOBİL DÜZELTMESİ (Tam Ortalama) */
+            .grid-1 { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
             .grid-1 .card { 
-                width: 70% !important; /* Mobilde genişliği ekrana göre oranla */
-                height: auto !important; /* Yüksekliği aspect-ratio'ya bırak */
-                max-width: 260px !important; /* Çok büyümesini engelle */
+                width: 70% !important; 
+                height: auto !important; 
+                max-width: 260px !important;
+                margin: auto !important; /* Dikeyde ve yatayda tam boşluk payı */
             }
         }
 
         /* ANA ALANLAR */
-        .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; padding: 20px; }
+        .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; padding: 20px 0; }
         .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100vh; }
         
         /* CAROUSEL (SAYFALAMA) YAPISI */
@@ -47,12 +51,12 @@
         /* IZGARALAR */
         /* 1. Sayfa (Kural Kartı) */
         .grid-1 { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-        .grid-1 .card { height: 80%; width: auto; max-height: 600px; aspect-ratio: 827 / 1417; }
+        .grid-1 .card { height: 80%; width: auto; max-height: 600px; aspect-ratio: 827 / 1417; margin: auto; }
         
         /* Diğer Sayfalar (Oyun Kartları) - PC'de 4 Yan Yana (4x1) */
         .grid-4 { 
             display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* PC'de 4 Sütun */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 20px; 
             width: 100%; 
             height: 100%; 
@@ -60,10 +64,7 @@
             justify-items: center;
         }
 
-        .grid-4 .card {
-            width: 100%;
-            max-width: 280px; 
-        }
+        .grid-4 .card { width: 100%; max-width: 280px; margin: auto; }
 
         /* CAROUSEL KONTROLLERİ */
         .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 2px solid white; border-radius: 50%; width: 45px; height: 45px; font-size: 1.4rem; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
@@ -71,7 +72,7 @@
         .prev { left: 10px; }
         .next { right: 10px; }
         
-        .dots { display: flex; gap: 8px; margin-top: 15px; }
+        .dots { display: flex; gap: 8px; margin-top: 15px; z-index: 10; }
         .dot { width: 10px; height: 10px; background: rgba(255,255,255,0.3); border-radius: 50%; cursor: pointer; transition: 0.3s; }
         .dot.active { background: var(--cyan); transform: scale(1.3); }
 
@@ -99,7 +100,6 @@
             opacity: 0; 
             transform: translateY(10px); 
             transition: 0.4s; 
-            margin: auto;
         }
         .card.visible { opacity: 1; transform: translateY(0); }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
@@ -107,7 +107,7 @@
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; overflow: hidden; }
         .back { border: 2.5px solid; } 
         .front { transform: rotateY(180deg); background: white; }
-        img { width: 100%; height: 100%; object-fit: cover; }
+        img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; /* Mobilde görselin sürüklenmesini engeller */ }
 
         /* RENK BORDERLARI */
         .kural-ozel { border-color: #ffffff; }
@@ -139,7 +139,7 @@
 </div>
 
 <script>
-    // AYARLAR (WebP Formatına Göre Ayarlandı)
+    // AYARLAR
     const ZAMANLAYICI_AKTIF = true; 
     const TOPLAM_SANIYE = 1200;      
     const ACILIS_GECIKMESI = 30;    
@@ -195,7 +195,7 @@
             oyunData.push({ color: renk, front: `${renk}_on_${no}.webp`, back: `${renk}_arka.webp` });
         });
     }
-    oyunData.sort(() => Math.random() - 0.5); // Oyun kartlarını karıştır
+    oyunData.sort(() => Math.random() - 0.5); 
     let oyunKartlari = oyunData.map((c, i) => createCardElement(c, i + KURAL_AYAR.dagitilacak));
     tumKartlarEls.push(...oyunKartlari);
 
@@ -257,6 +257,29 @@
         });
     }
 
+    // --- SÜRÜKLEME (SWIPE) KONTROLÜ (Mobil İçin) ---
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    track.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, {passive: true});
+
+    function handleSwipe() {
+        const threshold = 50; // Sürükleme için gereken minimum piksel hareketi
+        if (touchStartX - touchEndX > threshold) {
+            moveSlide(1); // Sola kaydırma (İleri git)
+        }
+        if (touchEndX - touchStartX > threshold) {
+            moveSlide(-1); // Sağa kaydırma (Geri git)
+        }
+    }
+
     // --- BAŞLAT BUTONU MANTIĞI ---
     const btn = document.getElementById('allOpenBtn');
     btn.onclick = () => {
@@ -288,7 +311,7 @@
         btn.disabled = false; btn.innerText = "Baştan Başlat"; isAllOpen = false;
     }
 
-    // --- İNDİR BUTONU MANTIĞI (.txt kaydetme) ---
+    // --- İNDİR BUTONU MANTIĞI ---
     document.getElementById('downloadBtn').onclick = () => {
         const textContent = document.getElementById('autoTextarea').value;
         if(textContent.trim() === "") {
@@ -296,18 +319,15 @@
             return;
         }
         
-        // Tarayıcı belleğinde geçici bir txt dosyası (Blob) oluştur
         const blob = new window.Blob([textContent], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         
-        // Arka planda bir <a> etiketi oluşturup tıklatarak indirmeyi tetikle
         const a = document.createElement('a');
         a.href = url;
         a.download = 'GorunmezKentler_Hikaye.txt';
         document.body.appendChild(a);
         a.click();
         
-        // İndirme bittikten sonra temizlik yap
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     };
