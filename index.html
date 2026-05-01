@@ -15,30 +15,52 @@
             display: flex; height: 100vh; margin: 0; overflow: hidden;
         }
 
-        /* MOBİL DÜZEN */
+        /* MOBİL DÜZEN (2x2 Yapı) */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow-y: auto; height: auto; }
-            .cards-area { order: 1; width: 100%; height: 60vh !important; padding: 10px; }
+            .cards-area { order: 1; width: 100%; height: 65vh !important; padding: 10px; }
             .text-area-container { order: 2; width: 100%; height: auto !important; border: none; padding: 15px; }
-            .grid-4 { max-width: 100% !important; }
+            
+            .grid-4 { 
+                grid-template-columns: 1fr 1fr !important; /* Mobilde 2 Sütun */
+                grid-template-rows: 1fr 1fr !important;    /* Mobilde 2 Satır */
+                gap: 10px !important;
+            }
+            .grid-1 .card { height: 90% !important; max-width: none !important; }
         }
 
         /* ANA ALANLAR */
-        .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; padding: 20px; }
         .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100vh; }
         
         /* CAROUSEL (SAYFALAMA) YAPISI */
-        .carousel { position: relative; width: 100%; max-width: 800px; height: 80%; display: flex; align-items: center; overflow: hidden; }
+        .carousel { position: relative; width: 100%; max-width: 1400px; height: 85%; display: flex; align-items: center; overflow: hidden; }
         .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
         .page { min-width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 10px; }
         
         /* IZGARALAR */
+        /* 1. Sayfa (Kural Kartı) - Orantılı ve şık boyut */
         .grid-1 { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-        .grid-1 .card { max-width: 300px; width: 100%; }
-        .grid-4 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; width: 100%; max-width: 500px; height: 100%; max-height: 800px;}
+        .grid-1 .card { height: 80%; width: auto; max-height: 600px; aspect-ratio: 827 / 1417; }
+        
+        /* Diğer Sayfalar (Oyun Kartları) - PC'de 4 Yan Yana (4x1) */
+        .grid-4 { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* PC'de 4 Sütun */
+            gap: 20px; 
+            width: 100%; 
+            height: 100%; 
+            align-items: center; 
+            justify-items: center;
+        }
+
+        .grid-4 .card {
+            width: 100%;
+            max-width: 280px; /* PC'de kartların devasa olmasını engeller */
+        }
 
         /* CAROUSEL KONTROLLERİ */
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: 2px solid white; border-radius: 50%; width: 45px; height: 45px; font-size: 1.4rem; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
         .nav-btn:hover { background: var(--cyan); color: black; }
         .prev { left: 10px; }
         .next { right: 10px; }
@@ -64,7 +86,15 @@
         }
 
         /* KARTLAR */
-        .card { width: 100%; height: 100%; max-height: 100%; aspect-ratio: 827 / 1417; cursor: pointer; perspective: 1000px; opacity: 0; transform: translateY(10px); transition: 0.4s; margin: auto;}
+        .card { 
+            aspect-ratio: 827 / 1417; 
+            cursor: pointer; 
+            perspective: 1000px; 
+            opacity: 0; 
+            transform: translateY(10px); 
+            transition: 0.4s; 
+            margin: auto;
+        }
         .card.visible { opacity: 1; transform: translateY(0); }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
@@ -142,7 +172,6 @@
             <div class="face front"><img src="${card.front}" loading="lazy"></div>
         </div>`;
         div.onclick = () => div.classList.toggle('flipped');
-        // Görünür olma animasyonu için gecikme
         setTimeout(() => div.classList.add('visible'), delayIndex * 12);
         return div;
     }
