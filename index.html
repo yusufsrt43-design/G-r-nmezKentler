@@ -3,45 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler v3 - Sekmeli Sistem</title>
+    <title>Görünmez Kentler - Slider Sistem</title>
     <style>
         :root { --bg: #0d2323; --box-bg: #e5fcfb; --accent: #7cffae; }
         * { box-sizing: border-box; }
-        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; }
+        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; align-items: center;}
 
-        .main-wrapper { display: flex; flex-direction: row; gap: 25px; width: 100%; max-width: 1400px; height: 92vh; }
+        .main-wrapper { display: flex; flex-direction: row; gap: 25px; width: 100%; max-width: 1400px; height: 90vh; }
 
-        /* SOL TARAF: KARTLAR VE SEKMELER */
-        .left-section { flex: 1.4; display: flex; flex-direction: column; gap: 15px; }
+        /* SOL TARAF: KART SLIDER */
+        .left-section { flex: 1.4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
         
-        .tabs-container { display: flex; gap: 5px; flex-wrap: wrap; }
-        .tab-btn { 
-            background: #1a3a3a; color: white; border: 1px solid var(--accent); 
-            padding: 8px 15px; cursor: pointer; border-radius: 5px 5px 0 0; transition: 0.3s;
+        .slider-container { display: flex; align-items: center; width: 100%; gap: 10px; }
+        
+        .card-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1;
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px;
         }
-        .tab-btn.active { background: var(--accent); color: black; font-weight: bold; }
 
-        .tab-content { 
-            display: none; grid-template-columns: repeat(2, 1fr); gap: 15px; 
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 0 5px 5px 5px;
-            flex: 1; overflow-y: auto;
-        }
-        .tab-content.active { display: grid; }
-
-        /* KART TASARIMI - Kırpılmayı Önleyen Ayarlar */
-        .card { width: 100%; aspect-ratio: 827 / 1100; perspective: 1000px; position: relative; }
+        /* KART TASARIMI */
+        .card { width: 100%; aspect-ratio: 827 / 1100; perspective: 1000px; display: none; }
+        .card.active { display: block; } /* Sadece aktif gruptaki kartlar görünür */
+        
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
         
         .face { 
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-            border-radius: 8px; border: 4px solid #000; overflow: hidden; background: #fff;
-            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; border: 4px solid #000; overflow: hidden; background: #fff;
         }
         .front { transform: rotateY(180deg); }
+        img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+
+        /* NAVİGASYON: OKLAR VE NOKTALAR */
+        .nav-btn { 
+            background: black; color: white; border: 1px solid var(--accent); 
+            width: 45px; height: 45px; border-radius: 50%; cursor: pointer; 
+            font-size: 24px; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .nav-btn:hover { background: var(--accent); color: black; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .dots-container { display: flex; gap: 12px; align-items: center; }
+        .dot { 
+            width: 12px; height: 12px; background: white; border-radius: 50%; 
+            opacity: 0.3; transition: 0.4s; cursor: pointer; 
+        }
+        .dot.active { opacity: 1; background: var(--accent); transform: scale(1.5); }
+
+        /* SAĞ TARAF: YAZI ALANI */
+        .right-section { flex: 1; background: var(--box-bg); border: 5px solid #000; display: flex; flex-direction: column; border-radius: 10px; overflow: hidden; }
+        .top-bar { display: flex; border-bottom: 5px solid #000; }
+        .top-bar button { flex: 1; padding: 25px; font-size: 24px; font-weight: bold; border: none; background: white; cursor: pointer; transition: 0.3s; }
+        #downloadBtn { border-left: 5px solid #000; }
+        .top-bar button:hover:not(:disabled) { background: var(--accent); }
         
-        /* ÖNEMLİ: Görüntü kırpılmaması için contain kullanıldı */
-        img { width: 100%; height: 100%; object-fit: contain; background: #f0f0f0; }
+        textarea { flex: 1; width: 100%; padding: 20px; font-size: 18px; border: none; outline: none; resize: none; background: transparent; line-height: 1.6; }
 
         /* RENK BORDERLARI */
         .kural-border { border-color: #ffffff !important; }
@@ -52,17 +69,8 @@
         .magenta-border { border-color: #f3c5f6 !important; }
         .siyah-border { border-color: #000000 !important; }
 
-        /* SAĞ TARAF: YAZI ALANI */
-        .right-section { flex: 1; background: var(--box-bg); border: 5px solid #000; display: flex; flex-direction: column; border-radius: 10px; }
-        .top-bar { display: flex; border-bottom: 5px solid #000; }
-        .top-bar button { flex: 1; padding: 25px; font-size: 24px; font-weight: bold; border: none; background: white; cursor: pointer; }
-        #downloadBtn { border-left: 5px solid #000; }
-        .top-bar button:hover:not(:disabled) { background: var(--accent); }
-        textarea { flex: 1; padding: 20px; font-size: 18px; border: none; outline: none; resize: none; background: transparent; line-height: 1.6; }
-
         @media (max-width: 900px) {
             .main-wrapper { flex-direction: column; height: auto; }
-            .tab-content { grid-template-columns: 1fr 1fr; }
             .right-section { height: 500px; }
         }
     </style>
@@ -70,11 +78,17 @@
 <body>
 
 <div class="main-wrapper">
+    <!-- Sol: Slider Kartlar -->
     <div class="left-section">
-        <div class="tabs-container" id="tabsHeader"></div>
-        <div id="tabsBody" style="flex:1; display:flex; flex-direction:column;"></div>
+        <div class="slider-container">
+            <button class="nav-btn" id="prevBtn" onclick="changeGroup(-1)">❮</button>
+            <div class="card-grid" id="cardGrid"></div>
+            <button class="nav-btn" id="nextBtn" onclick="changeGroup(1)">❯</button>
+        </div>
+        <div class="dots-container" id="dotsContainer"></div>
     </div>
 
+    <!-- Sağ: Yazı Alanı -->
     <div class="right-section">
         <div class="top-bar">
             <button id="startBtn">Başlat</button>
@@ -85,10 +99,10 @@
 </div>
 
 <script>
-    /* --- AYARLAR --- */
-    const ZAMAN_SANIYE = 1200;
-    const ACILIS_HIZI = 60;
-    const KART_PER_TAB = 4; // Her sekmede kaç kart olacak
+    /* --- DÜZENLENEBİLİR AYARLAR --- */
+    const ZAMAN_SANIYE = 1200;      // 20 Dakika geri sayım[cite: 2]
+    const ACILIS_HIZI = 50;        // Başlat'a basınca kartların açılma hızı[cite: 2]
+    const KART_GRUBU = 4;          // Her ekranda görünecek kart sayısı
 
     const DAGITIM = {
         'sari':    { adet: 7, havuz: 40 },
@@ -100,74 +114,80 @@
     };
     const KURAL = { adet: 1, havuz: 24 };
 
+    /* --- SİSTEM DEĞİŞKENLERİ --- */
     let tumKartlar = [];
-    let timer;
+    let currentGroupIndex = 0;
+    let totalGroups = 0;
 
-    function rastgele(max, count) {
-        let res = [];
-        while(res.length < count) {
+    function randomPick(max, count) {
+        let n = [];
+        while(n.length < count) {
             let r = Math.floor(Math.random() * max) + 1;
-            if(!res.includes(r)) res.push(r);
+            if(!n.includes(r)) n.push(r);
         }
-        return res;
+        return n;
     }
 
     function init() {
-        const tabsHeader = document.getElementById('tabsHeader');
-        const tabsBody = document.getElementById('tabsBody');
+        const grid = document.getElementById('cardGrid');
+        const dotsContainer = document.getElementById('dotsContainer');
         
-        // Kart Verilerini Hazırla
-        let kartHavuzu = [];
-        rastgele(KURAL.havuz, KURAL.adet).forEach(n => kartHavuzu.push({t:'kural', n, b:'kural-border'}));
-        
+        // 1. Veri Hazırlama[cite: 2]
+        let dataPool = [];
+        randomPick(KURAL.havuz, KURAL.adet).forEach(n => dataPool.push({t:'kural', n, b:'kural-border'}));
         for (const [r, a] of Object.entries(DAGITIM)) {
-            rastgele(a.havuz, a.adet).forEach(n => kartHavuzu.push({t:r, n, b:r+'-border'}));
+            randomPick(a.havuz, a.adet).forEach(n => dataPool.push({t:r, n, b:r+'-border'}));
         }
-        
-        // Karıştır ve Sekmelere Böl
-        kartHavuzu.sort(() => Math.random() - 0.5);
-        
-        for(let i=0; i < Math.ceil(kartHavuzu.length / KART_PER_TAB); i++) {
-            // Sekme Butonu
-            const btn = document.createElement('button');
-            btn.className = `tab-btn ${i===0?'active':''}`;
-            btn.innerText = `${i+1}. Grup`;
-            btn.onclick = () => switchTab(i);
-            tabsHeader.appendChild(btn);
+        dataPool.sort(() => Math.random() - 0.5);
 
-            // Sekme İçeriği (Grid)
-            const content = document.createElement('div');
-            content.className = `tab-content ${i===0?'active':''}`;
-            content.id = `tab-${i}`;
-            
-            const slice = kartHavuzu.slice(i*KART_PER_TAB, (i+1)*KART_PER_TAB);
-            slice.forEach(data => {
-                const card = createCardElement(data);
-                content.appendChild(card);
-            });
-            tabsBody.appendChild(content);
+        // 2. Kartları ve Grupları Oluştur
+        totalGroups = Math.ceil(dataPool.length / KART_GRUBU);
+        dataPool.forEach((data, index) => {
+            const groupIndex = Math.floor(index / KART_GRUBU);
+            const card = document.createElement('div');
+            card.className = `card group-${groupIndex}`;
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="face back"><img src="${data.t}_arka.webp"></div>
+                    <div class="face front ${data.b}"><img src="${data.t}_on_${data.n}.webp"></div>
+                </div>`;
+            card.onclick = () => card.classList.toggle('flipped');
+            grid.appendChild(card);
+            tumKartlar.push(card);
+        });
+
+        // 3. Noktaları Oluştur
+        for(let i=0; i<totalGroups; i++) {
+            const dot = document.createElement('div');
+            dot.className = `dot ${i===0?'active':''}`;
+            dot.onclick = () => showGroup(i);
+            dotsContainer.appendChild(dot);
         }
+
+        showGroup(0);
     }
 
-    function createCardElement(data) {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-            <div class="card-inner">
-                <div class="face back"><img src="${data.t}_arka.webp" alt="Arka"></div>
-                <div class="face front ${data.b}"><img src="${data.t}_on_${data.n}.webp" alt="Ön"></div>
-            </div>`;
-        div.onclick = () => div.classList.toggle('flipped');
-        tumKartlar.push(div);
-        return div;
+    function showGroup(index) {
+        currentGroupIndex = index;
+        // Kartları filtrele
+        tumKartlar.forEach((card, i) => {
+            card.classList.toggle('active', Math.floor(i / KART_GRUBU) === index);
+        });
+        // Noktaları güncelle
+        document.querySelectorAll('.dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+        // Butonları güncelle
+        document.getElementById('prevBtn').disabled = index === 0;
+        document.getElementById('nextBtn').disabled = index === totalGroups - 1;
     }
 
-    function switchTab(index) {
-        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === index));
-        document.querySelectorAll('.tab-content').forEach((c, i) => c.classList.toggle('active', i === index));
+    function changeGroup(step) {
+        let target = currentGroupIndex + step;
+        if(target >= 0 && target < totalGroups) showGroup(target);
     }
 
-    // BAŞLAT
+    // BAŞLAT[cite: 2]
     document.getElementById('startBtn').onclick = function() {
         this.disabled = true;
         let c = 0;
@@ -182,18 +202,20 @@
 
     function startTimer() {
         let t = ZAMAN_SANIYE;
-        timer = setInterval(() => {
-            let m = Math.floor(t/60).toString().padStart(2,'0');
-            let s = (t%60).toString().padStart(2,'0');
-            document.getElementById('startBtn').innerText = `${m}:${s}`;
+        const btn = document.getElementById('startBtn');
+        const interval = setInterval(() => {
+            let min = Math.floor(t/60).toString().padStart(2,'0');
+            let sec = (t%60).toString().padStart(2,'0');
+            btn.innerText = `${min}:${sec}`;
             t--;
-            if(t<0) { clearInterval(timer); alert("Süre bitti!"); }
+            if(t < 0) { clearInterval(interval); alert("Süre bitti!"); }
         }, 1000);
     }
 
-    // İNDİR
+    // İNDİR[cite: 1]
     document.getElementById('downloadBtn').onclick = () => {
         const val = document.getElementById('storyText').value;
+        if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");
         const blob = new Blob([val], {type:'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
