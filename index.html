@@ -3,44 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler v5</title>
+    <title>Görünmez Kentler v6 - Kesin Çözüm</title>
     <style>
         :root { --bg: #0d2323; --box-bg: #e5fcfb; --accent: #7cffae; }
         * { box-sizing: border-box; }
-        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: center; overflow: hidden; }
+        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: center; overflow-x: hidden; }
 
-        .main-wrapper { display: flex; flex-direction: row; gap: 30px; width: 100%; max-width: 1600px; height: 95vh; align-items: stretch; }
+        .main-wrapper { display: flex; flex-direction: row; gap: 30px; width: 100%; max-width: 1500px; height: 95vh; align-items: stretch; }
 
         /* SOL TARAF: KART ALANI */
-        .left-section { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 0; }
+        .left-section { flex: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 0; }
         
         .slider-container { display: flex; align-items: center; width: 100%; gap: 15px; justify-content: center; flex: 1; }
         
+        /* KART GRID SİSTEMİ (HATANIN ÇÖZÜLDÜĞÜ YER) */
         .card-grid { 
             display: grid; gap: 20px; 
-            padding: 20px; border-radius: 15px; background: rgba(255,255,255,0.02);
-            width: 100%; height: 100%; align-content: center; justify-items: center;
+            padding: 30px; border-radius: 15px; background: rgba(255,255,255,0.02);
+            align-content: center; justify-content: center;
+            transition: 0.3s;
         }
 
-        /* GRID MODLARI */
-        .card-grid.kural-mode { grid-template-columns: 1fr; } /* Tek büyük kart */
-        .card-grid.oyun-mode { grid-template-columns: repeat(2, 1fr); } /* 2x2 yerleşim */
-
-        /* KART TASARIMI - 827x1417 */
-        .card { width: auto; height: 100%; max-height: 70vh; aspect-ratio: 827 / 1417; perspective: 1000px; display: none; }
-        .card.active { display: block; }
+        /* 1. Sekme: Kural Kartı Modu (Tek Büyük Sütun) */
+        .card-grid.kural-mode { grid-template-columns: minmax(250px, 350px); }
         
-        /* Kural Kartı Daha Büyük */
-        .card.is-kural { max-height: 80vh; }
+        /* 2. Sekme ve Sonrası: Oyun Kartı Modu (2x2 Sütun) */
+        .card-grid.oyun-mode { grid-template-columns: repeat(2, minmax(130px, 220px)); }
+
+        /* KART TASARIMI - 827x1417 Oranı */
+        .card { width: 100%; aspect-ratio: 827 / 1417; perspective: 1000px; display: none; }
+        .card.active { display: block; }
 
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; border: 4px solid #000; overflow: hidden; background: #fff; }
+        
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; border: 4px solid #000; overflow: hidden; background: #fff; display: flex; justify-content: center; align-items: center; font-size: 12px; color: #ccc;}
         .front { transform: rotateY(180deg); }
+        
+        /* Görüntü Kırpılmasını Engeller */
         img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 
-        /* NAVİGASYON */
-        .nav-btn { background: black; color: white; border: 1px solid var(--accent); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 24px; transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        /* NAVİGASYON (OKLAR VE NOKTALAR) */
+        .nav-btn { background: black; color: white; border: 1px solid var(--accent); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 24px; transition: 0.3s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .nav-btn:hover { background: var(--accent); color: black; }
         .nav-btn:disabled { opacity: 0.1; cursor: not-allowed; }
 
@@ -51,7 +55,7 @@
         /* SAĞ TARAF: YAZI ALANI */
         .right-section { flex: 1; background: var(--box-bg); border: 5px solid #000; display: flex; flex-direction: column; border-radius: 10px; }
         .top-bar { display: flex; border-bottom: 5px solid #000; }
-        .top-bar button { flex: 1; padding: 25px; font-size: 26px; font-weight: bold; border: none; background: white; cursor: pointer; }
+        .top-bar button { flex: 1; padding: 25px; font-size: 24px; font-weight: bold; border: none; background: white; cursor: pointer; transition: 0.2s;}
         #downloadBtn { border-left: 5px solid #000; }
         .top-bar button:hover:not(:disabled) { background: var(--accent); }
         textarea { flex: 1; width: 100%; padding: 25px; font-size: 18px; border: none; outline: none; resize: none; background: transparent; line-height: 1.6; }
@@ -67,7 +71,6 @@
 
         @media (max-width: 900px) {
             .main-wrapper { flex-direction: column; height: auto; overflow-y: auto; }
-            .card { max-height: 400px; }
             .right-section { height: 500px; width: 100%; }
         }
     </style>
@@ -75,15 +78,19 @@
 <body>
 
 <div class="main-wrapper">
+    <!-- Sol Bölüm -->
     <div class="left-section">
         <div class="slider-container">
             <button class="nav-btn" id="prevBtn" onclick="changeGroup(-1)">❮</button>
-            <div class="card-grid" id="cardGrid"></div>
+            <div class="card-grid" id="cardGrid">
+                <!-- Kartlar Buraya Yüklenecek -->
+            </div>
             <button class="nav-btn" id="nextBtn" onclick="changeGroup(1)">❯</button>
         </div>
         <div class="dots-container" id="dotsContainer"></div>
     </div>
 
+    <!-- Sağ Bölüm -->
     <div class="right-section">
         <div class="top-bar">
             <button id="startBtn">Başlat</button>
@@ -94,11 +101,14 @@
 </div>
 
 <script>
-    /* --- AYARLAR[cite: 2] --- */
-    const ZAMAN_SANIYE = 1200; 
-    const ACILIS_HIZI = 60;   
-    const OYUN_KART_GRUBU = 4; 
+    /* ==============================
+       AYARLAR BÖLÜMÜ[cite: 2]
+       ============================== */
+    const ZAMAN_SANIYE = 1200;      // Geri sayım süresi
+    const ACILIS_HIZI = 60;         // Kart açılış hızı (milisaniye)
+    const OYUN_KART_GRUBU = 4;      // Her sayfadaki oyun kartı sayısı
 
+    // Kart Renk Havuzları[cite: 2]
     const DAGITIM = {
         'sari':    { adet: 7, havuz: 40 },
         'mavi':    { adet: 3, havuz: 15 },
@@ -109,6 +119,9 @@
     };
     const KURAL_AYAR = { adet: 1, havuz: 24 };
 
+    /* ==============================
+       SİSTEM DEĞİŞKENLERİ
+       ============================== */
     let tumKartlar = [];
     let currentGroupIndex = 0;
     let totalGroups = 0;
@@ -129,23 +142,24 @@
         dotsContainer.innerHTML = '';
         tumKartlar = [];
 
-        // 1. Kural Kartı (Grup 0)[cite: 2]
+        // 1. KURAL KARTI OLUŞTUR (Sadece 1 tane, Grup: 0)[cite: 2]
         let kuralNo = randomPick(KURAL_AYAR.havuz, 1)[0];
-        addCardToDOM('kural', kuralNo, 'kural-border', 0, grid, true);
+        addCardToDOM('kural', kuralNo, 'kural-border', 0, grid);
 
-        // 2. Oyun Kartlarını Hazırla[cite: 2]
+        // 2. OYUN KARTLARINI OLUŞTUR VE KARIŞTIR[cite: 2]
         let oyunKartlari = [];
         for (const [r, a] of Object.entries(DAGITIM)) {
             randomPick(a.havuz, a.adet).forEach(n => oyunKartlari.push({t:r, n, b:r+'-border'}));
         }
         oyunKartlari.sort(() => Math.random() - 0.5);
 
-        // 3. Oyun Kartlarını 1. gruptan itibaren dağıt[cite: 2]
+        // 3. OYUN KARTLARINI GRUPLA (Grup: 1, 2, 3...)[cite: 2]
         oyunKartlari.forEach((data, index) => {
             const groupIndex = Math.floor(index / OYUN_KART_GRUBU) + 1;
-            addCardToDOM(data.t, data.n, data.b, groupIndex, grid, false);
+            addCardToDOM(data.t, data.n, data.b, groupIndex, grid);
         });
 
+        // 4. NOKTALARI OLUŞTUR
         totalGroups = Math.max(...tumKartlar.map(c => parseInt(c.dataset.group))) + 1;
         for(let i=0; i<totalGroups; i++) {
             const dot = document.createElement('div');
@@ -153,18 +167,23 @@
             dot.onclick = () => showGroup(i);
             dotsContainer.appendChild(dot);
         }
+
+        // İlk Grubu Göster
         showGroup(0);
     }
 
-    function addCardToDOM(type, no, border, group, container, isKural) {
+    function addCardToDOM(type, no, border, group, container) {
         const card = document.createElement('div');
-        card.className = `card ${isKural ? 'is-kural' : ''}`;
+        card.className = `card`;
         card.dataset.group = group;
+        
+        // img'lerin alt öznitelikleri var, resim bulunamazsa bile tasarım bozulmaz
         card.innerHTML = `
             <div class="card-inner">
-                <div class="face back"><img src="${type}_arka.webp"></div>
-                <div class="face front ${border}"><img src="${type}_on_${no}.webp"></div>
+                <div class="face back"><img src="${type}_arka.webp" alt="Arka Yüz"></div>
+                <div class="face front ${border}"><img src="${type}_on_${no}.webp" alt="Ön Yüz"></div>
             </div>`;
+            
         card.onclick = () => card.classList.toggle('flipped');
         container.appendChild(card);
         tumKartlar.push(card);
@@ -174,15 +193,26 @@
         currentGroupIndex = index;
         const grid = document.getElementById('cardGrid');
         
-        // Grid Modunu Değiştir
-        grid.className = `card-grid ${index === 0 ? 'kural-mode' : 'oyun-mode'}`;
+        // Sınıf değiştirerek GRID boyutlarını Kural/Oyun moduna çevir[cite: 2]
+        if(index === 0) {
+            grid.classList.remove('oyun-mode');
+            grid.classList.add('kural-mode');
+        } else {
+            grid.classList.remove('kural-mode');
+            grid.classList.add('oyun-mode');
+        }
 
+        // Kart Görünürlüğü
         tumKartlar.forEach(card => {
             card.classList.toggle('active', parseInt(card.dataset.group) === index);
         });
+        
+        // Nokta Aktifliği
         document.querySelectorAll('.dot').forEach((dot, i) => {
             dot.classList.toggle('active', i === index);
         });
+        
+        // Buton Durumları
         document.getElementById('prevBtn').disabled = index === 0;
         document.getElementById('nextBtn').disabled = index === totalGroups - 1;
     }
@@ -192,8 +222,10 @@
         if(target >= 0 && target < totalGroups) showGroup(target);
     }
 
+    // BAŞLAT BUTONU[cite: 2]
     document.getElementById('startBtn').onclick = function() {
         this.disabled = true;
+        this.innerText = "Açılıyor...";
         let c = 0;
         tumKartlar.forEach((card, i) => {
             setTimeout(() => {
@@ -212,13 +244,19 @@
             let sec = (t%60).toString().padStart(2,'0');
             btn.innerText = `${min}:${sec}`;
             t--;
-            if(t < 0) { clearInterval(interval); alert("Süre bitti!"); }
+            if(t < 0) { 
+                clearInterval(interval); 
+                alert("Süre doldu!"); 
+                btn.disabled = false;
+                btn.innerText = "Başlat";
+            }
         }, 1000);
     }
 
+    // İNDİR BUTONU[cite: 1]
     document.getElementById('downloadBtn').onclick = () => {
         const val = document.getElementById('storyText').value;
-        if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");[cite: 1]
+        if(!val.trim()) return alert("Lütfen önce hikayenizi yazın!");[cite: 1]
         const blob = new Blob([val], {type:'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
