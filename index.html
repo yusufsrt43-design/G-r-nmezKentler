@@ -3,64 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Görünmez Kentler - Slider Sistem</title>
+    <title>Görünmez Kentler - 827x1417 Versiyon</title>
     <style>
         :root { --bg: #0d2323; --box-bg: #e5fcfb; --accent: #7cffae; }
         * { box-sizing: border-box; }
-        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; align-items: center;}
+        body { background: var(--bg); font-family: Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; align-items: center;}
 
-        .main-wrapper { display: flex; flex-direction: row; gap: 25px; width: 100%; max-width: 1400px; height: 90vh; }
+        .main-wrapper { display: flex; flex-direction: row; gap: 20px; width: 100%; max-width: 1500px; height: 95vh; }
 
         /* SOL TARAF: KART SLIDER */
-        .left-section { flex: 1.4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+        .left-section { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
         
         .slider-container { display: flex; align-items: center; width: 100%; gap: 10px; }
         
         .card-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1;
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1;
+            background: rgba(255,255,255,0.02); padding: 10px; border-radius: 10px;
         }
 
-        /* KART TASARIMI */
-        .card { width: 100%; aspect-ratio: 827 / 1100; perspective: 1000px; display: none; }
-        .card.active { display: block; } /* Sadece aktif gruptaki kartlar görünür */
+        /* KART TASARIMI - 827x1417 Oranı */
+        .card { width: 100%; aspect-ratio: 827 / 1417; perspective: 1000px; display: none; }
+        .card.active { display: block; }
         
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
         
         .face { 
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-            border-radius: 10px; border: 4px solid #000; overflow: hidden; background: #fff;
+            border-radius: 8px; border: 3px solid #000; overflow: hidden; background: #fff;
         }
         .front { transform: rotateY(180deg); }
         img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 
-        /* NAVİGASYON: OKLAR VE NOKTALAR */
+        /* NAVİGASYON */
         .nav-btn { 
             background: black; color: white; border: 1px solid var(--accent); 
-            width: 45px; height: 45px; border-radius: 50%; cursor: pointer; 
-            font-size: 24px; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer; 
+            font-size: 20px; transition: 0.3s; display: flex; align-items: center; justify-content: center;
         }
         .nav-btn:hover { background: var(--accent); color: black; }
-        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .dots-container { display: flex; gap: 12px; align-items: center; }
-        .dot { 
-            width: 12px; height: 12px; background: white; border-radius: 50%; 
-            opacity: 0.3; transition: 0.4s; cursor: pointer; 
-        }
-        .dot.active { opacity: 1; background: var(--accent); transform: scale(1.5); }
+        .dots-container { display: flex; gap: 10px; align-items: center; }
+        .dot { width: 10px; height: 10px; background: white; border-radius: 50%; opacity: 0.3; transition: 0.3s; cursor: pointer; }
+        .dot.active { opacity: 1; background: var(--accent); transform: scale(1.4); }
 
         /* SAĞ TARAF: YAZI ALANI */
-        .right-section { flex: 1; background: var(--box-bg); border: 5px solid #000; display: flex; flex-direction: column; border-radius: 10px; overflow: hidden; }
-        .top-bar { display: flex; border-bottom: 5px solid #000; }
-        .top-bar button { flex: 1; padding: 25px; font-size: 24px; font-weight: bold; border: none; background: white; cursor: pointer; transition: 0.3s; }
-        #downloadBtn { border-left: 5px solid #000; }
+        .right-section { flex: 1; background: var(--box-bg); border: 4px solid #000; display: flex; flex-direction: column; border-radius: 8px; overflow: hidden; }
+        .top-bar { display: flex; border-bottom: 4px solid #000; }
+        .top-bar button { flex: 1; padding: 20px; font-size: 22px; font-weight: bold; border: none; background: white; cursor: pointer; transition: 0.3s; }
+        #downloadBtn { border-left: 4px solid #000; }
         .top-bar button:hover:not(:disabled) { background: var(--accent); }
         
-        textarea { flex: 1; width: 100%; padding: 20px; font-size: 18px; border: none; outline: none; resize: none; background: transparent; line-height: 1.6; }
+        textarea { flex: 1; width: 100%; padding: 15px; font-size: 16px; border: none; outline: none; resize: none; background: transparent; line-height: 1.5; }
 
-        /* RENK BORDERLARI */
+        /* RENK BORDERLARI[cite: 2] */
         .kural-border { border-color: #ffffff !important; }
         .sari-border { border-color: #e3f498 !important; }
         .mavi-border { border-color: #92e8f7 !important; }
@@ -70,15 +67,15 @@
         .siyah-border { border-color: #000000 !important; }
 
         @media (max-width: 900px) {
-            .main-wrapper { flex-direction: column; height: auto; }
-            .right-section { height: 500px; }
+            .main-wrapper { flex-direction: column; height: auto; padding-bottom: 40px; }
+            .left-section, .right-section { width: 100%; }
+            .right-section { height: 450px; }
         }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
-    <!-- Sol: Slider Kartlar -->
     <div class="left-section">
         <div class="slider-container">
             <button class="nav-btn" id="prevBtn" onclick="changeGroup(-1)">❮</button>
@@ -88,7 +85,6 @@
         <div class="dots-container" id="dotsContainer"></div>
     </div>
 
-    <!-- Sağ: Yazı Alanı -->
     <div class="right-section">
         <div class="top-bar">
             <button id="startBtn">Başlat</button>
@@ -99,10 +95,10 @@
 </div>
 
 <script>
-    /* --- DÜZENLENEBİLİR AYARLAR --- */
-    const ZAMAN_SANIYE = 1200;      // 20 Dakika geri sayım[cite: 2]
-    const ACILIS_HIZI = 50;        // Başlat'a basınca kartların açılma hızı[cite: 2]
-    const KART_GRUBU = 4;          // Her ekranda görünecek kart sayısı
+    /* --- AYARLAR[cite: 2] --- */
+    const ZAMAN_SANIYE = 1200; 
+    const ACILIS_HIZI = 50;   
+    const KART_GRUBU = 4;     
 
     const DAGITIM = {
         'sari':    { adet: 7, havuz: 40 },
@@ -114,7 +110,6 @@
     };
     const KURAL = { adet: 1, havuz: 24 };
 
-    /* --- SİSTEM DEĞİŞKENLERİ --- */
     let tumKartlar = [];
     let currentGroupIndex = 0;
     let totalGroups = 0;
@@ -132,7 +127,6 @@
         const grid = document.getElementById('cardGrid');
         const dotsContainer = document.getElementById('dotsContainer');
         
-        // 1. Veri Hazırlama[cite: 2]
         let dataPool = [];
         randomPick(KURAL.havuz, KURAL.adet).forEach(n => dataPool.push({t:'kural', n, b:'kural-border'}));
         for (const [r, a] of Object.entries(DAGITIM)) {
@@ -140,7 +134,6 @@
         }
         dataPool.sort(() => Math.random() - 0.5);
 
-        // 2. Kartları ve Grupları Oluştur
         totalGroups = Math.ceil(dataPool.length / KART_GRUBU);
         dataPool.forEach((data, index) => {
             const groupIndex = Math.floor(index / KART_GRUBU);
@@ -156,28 +149,23 @@
             tumKartlar.push(card);
         });
 
-        // 3. Noktaları Oluştur
         for(let i=0; i<totalGroups; i++) {
             const dot = document.createElement('div');
             dot.className = `dot ${i===0?'active':''}`;
             dot.onclick = () => showGroup(i);
             dotsContainer.appendChild(dot);
         }
-
         showGroup(0);
     }
 
     function showGroup(index) {
         currentGroupIndex = index;
-        // Kartları filtrele
         tumKartlar.forEach((card, i) => {
             card.classList.toggle('active', Math.floor(i / KART_GRUBU) === index);
         });
-        // Noktaları güncelle
         document.querySelectorAll('.dot').forEach((dot, i) => {
             dot.classList.toggle('active', i === index);
         });
-        // Butonları güncelle
         document.getElementById('prevBtn').disabled = index === 0;
         document.getElementById('nextBtn').disabled = index === totalGroups - 1;
     }
@@ -187,7 +175,7 @@
         if(target >= 0 && target < totalGroups) showGroup(target);
     }
 
-    // BAŞLAT[cite: 2]
+    /* --- BUTON İŞLEVLERİ --- */
     document.getElementById('startBtn').onclick = function() {
         this.disabled = true;
         let c = 0;
@@ -212,14 +200,13 @@
         }, 1000);
     }
 
-    // İNDİR[cite: 1]
     document.getElementById('downloadBtn').onclick = () => {
         const val = document.getElementById('storyText').value;
-        if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");
+        if(!val.trim()) return alert("Lütfen önce bir şeyler yazın!");[cite: 1]
         const blob = new Blob([val], {type:'text/plain'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = "hikayem.txt";
+        a.download = "hikayem.txt";[cite: 1]
         a.click();
     };
 
