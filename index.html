@@ -26,7 +26,13 @@
                 grid-template-rows: 1fr 1fr !important;    /* Mobilde 2 Satır */
                 gap: 10px !important;
             }
-            .grid-1 .card { height: 90% !important; max-width: none !important; }
+            
+            /* KURAL KARTI MOBİL DÜZELTMESİ */
+            .grid-1 .card { 
+                width: 70% !important; /* Mobilde genişliği ekrana göre oranla */
+                height: auto !important; /* Yüksekliği aspect-ratio'ya bırak */
+                max-width: 260px !important; /* Çok büyümesini engelle */
+            }
         }
 
         /* ANA ALANLAR */
@@ -39,7 +45,7 @@
         .page { min-width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 10px; }
         
         /* IZGARALAR */
-        /* 1. Sayfa (Kural Kartı) - Orantılı ve şık boyut */
+        /* 1. Sayfa (Kural Kartı) */
         .grid-1 { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
         .grid-1 .card { height: 80%; width: auto; max-height: 600px; aspect-ratio: 827 / 1417; }
         
@@ -56,7 +62,7 @@
 
         .grid-4 .card {
             width: 100%;
-            max-width: 280px; /* PC'de kartların devasa olmasını engeller */
+            max-width: 280px; 
         }
 
         /* CAROUSEL KONTROLLERİ */
