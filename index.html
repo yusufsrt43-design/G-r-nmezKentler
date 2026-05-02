@@ -2,7 +2,8 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Mobil cihazlarda istemsiz yakınlaştırmayı (zoom) engeller, tam bir uygulama hissi verir -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Görünmez Kentler - Po.E.T.A</title>
     <link rel="icon" type="image/png" href="POETA_Logo.png">
     <link rel="apple-touch-icon" href="POETA_Logo.png">
@@ -12,13 +13,17 @@
         
         body { 
             background: var(--bg); color: white; font-family: 'Segoe UI', Arial, sans-serif; 
-            display: flex; height: 100vh; margin: 0; overflow: hidden;
+            display: flex; 
+            margin: 0; overflow: hidden;
             -webkit-tap-highlight-color: transparent; 
+            /* Eski tarayıcılar için vh, modern/iOS tarayıcılar için dvh (dinamik yükseklik) */
+            height: 100vh; 
+            height: 100dvh; 
         }
 
         /* --- ANA ALANLAR (Masaüstü) --- */
-        .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; padding: 20px; }
-        .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100vh; }
+        .cards-area { flex: 3; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; overflow: hidden; padding: 20px; }
+        .text-area-container { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; height: 100%; }
         
         /* --- CAROUSEL YAPISI --- */
         .carousel { position: relative; width: 100%; max-width: 1400px; height: 85%; display: flex; align-items: center; overflow: hidden; }
@@ -74,32 +79,48 @@
 
         /* --- MOBİL DÜZEN (EN ALTTA OLMALI!) --- */
         @media (max-width: 768px) {
-            body { flex-direction: column; overflow-y: auto; height: auto; }
-            .text-area-container { order: 2; width: 100%; height: auto; border: none; padding: 15px; }
+            body { 
+                flex-direction: column; 
+                /* Mobil için kaydırma iptal edildi, uygulama gibi kilitli duracak */
+                overflow: hidden; 
+                height: 100vh; 
+                height: 100dvh; 
+            }
+            
+            .text-area-container { 
+                order: 2; width: 100%; height: auto; border: none; 
+                padding: 15px; 
+                padding-bottom: 25px; /* iOS Home Indicator (alttaki çizgi) için güvenli boşluk */
+                flex: none; /* Metin kutusunun küçülmesini engeller */
+            }
             
             .cards-area { 
-                order: 1; width: 100%; height: 65vh; padding: 15px 0; 
+                order: 1; width: 100%; 
+                flex: 1; /* Üstteki alanı tamamen doldur, Safari çökmesini engeller! */
+                height: auto; 
+                padding: 15px 0; 
                 display: flex; flex-direction: column; 
             }
             
-            .carousel { flex: 1; height: auto; } 
+            .carousel { 
+                flex: 1; height: auto; 
+                min-height: 0; /* Safari Flexbox hatasını çözen altın vuruş */
+            } 
             
             .grid-4 { 
                 grid-template-columns: 1fr 1fr; 
                 grid-template-rows: 1fr 1fr; gap: 10px;
             }
             
-            /* Mobil Kural Kartı */
             .page { padding: 0; } 
             .grid-1 { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
             .grid-1 .card { 
                 width: 65%; height: auto; max-width: 260px; margin: auto; 
             }
 
-            /* Buton Görünümleri */
             .pc-arrow { display: none; }
             .mobile-arrow { display: flex; width: 35px; height: 35px; font-size: 1.2rem; }
-            .bottom-controls { width: 100%; margin-top: 5px; }
+            .bottom-controls { width: 100%; margin-top: 5px; flex: none; }
         }
     </style>
 </head>
